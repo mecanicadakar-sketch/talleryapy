@@ -36,7 +36,8 @@ export default async function handler(req, res) {
         nombre = ${b.nombre}, categoria = ${b.categoria || ''}, ciudad = ${b.ciudad}, direccion = ${b.direccion},
         horario = ${b.horario || ''}, descripcion = ${b.descripcion || ''}, servicios = ${servicios}::jsonb,
         telefono = ${b.telefono || ''}, whatsapp = ${b.whatsapp}, email = ${b.email || ''}, imagen = ${b.imagen || ''},
-        lat = ${lat}, lng = ${lng}
+        lat = ${lat}, lng = ${lng}, destacado_solicitado = ${Boolean(b.destacadoSolicitado)},
+        auspicio_solicitado = ${Boolean(b.auspicioSolicitado)}, telefono_pago = ${b.telefonoPago || ''}
       WHERE id = ${id}
     `;
     res.status(200).json({ ok: true });

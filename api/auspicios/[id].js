@@ -30,7 +30,8 @@ export default async function handler(req, res) {
         descripcion = ${b.descripcion || ''}, servicios = ${servicios}::jsonb,
         direccion = ${b.direccion || ''}, ciudad = ${b.ciudad || ''}, telefono = ${b.telefono || ''},
         whatsapp = ${b.whatsapp || ''}, email = ${b.email || ''}, imagen = ${b.imagen || ''},
-        link = ${b.link || ''}, lat = ${lat}, lng = ${lng}
+        link = ${b.link || ''}, lat = ${lat}, lng = ${lng}, destacado_solicitado = ${Boolean(b.destacadoSolicitado)},
+        telefono_pago = ${b.telefonoPago || ''}
       WHERE id = ${id}
     `;
     res.status(200).json({ ok: true });

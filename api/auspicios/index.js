@@ -17,7 +17,10 @@ function rowToAuspicio(r) {
     imagen: r.imagen,
     link: r.link,
     ubicacion: r.lat != null && r.lng != null ? { lat: r.lat, lng: r.lng } : null,
-    destacado: r.destacado
+    destacado: r.destacado,
+    destacadoSolicitado: r.destacado_solicitado,
+    telefonoPago: r.telefono_pago,
+    creado: r.created_at
   };
 }
 
@@ -48,8 +51,8 @@ export default async function handler(req, res) {
     const lng = b.ubicacion ? b.ubicacion.lng : null;
 
     await sql`
-      INSERT INTO auspicios (id, nombre, categoria, horario, descripcion, servicios, direccion, ciudad, telefono, whatsapp, email, imagen, link, lat, lng, destacado)
-      VALUES (${id}, ${b.nombre}, ${b.categoria || ''}, ${b.horario || ''}, ${b.descripcion || ''}, ${servicios}::jsonb, ${b.direccion || ''}, ${b.ciudad || ''}, ${b.telefono || ''}, ${b.whatsapp || ''}, ${b.email || ''}, ${b.imagen || ''}, ${b.link || ''}, ${lat}, ${lng}, false)
+      INSERT INTO auspicios (id, nombre, categoria, horario, descripcion, servicios, direccion, ciudad, telefono, whatsapp, email, imagen, link, lat, lng, destacado, destacado_solicitado, telefono_pago)
+      VALUES (${id}, ${b.nombre}, ${b.categoria || ''}, ${b.horario || ''}, ${b.descripcion || ''}, ${servicios}::jsonb, ${b.direccion || ''}, ${b.ciudad || ''}, ${b.telefono || ''}, ${b.whatsapp || ''}, ${b.email || ''}, ${b.imagen || ''}, ${b.link || ''}, ${lat}, ${lng}, false, ${Boolean(b.destacadoSolicitado)}, ${b.telefonoPago || ''})
     `;
     res.status(201).json({ ok: true, id });
     return;

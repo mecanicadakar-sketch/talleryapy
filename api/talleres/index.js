@@ -17,7 +17,11 @@ function rowToTaller(r) {
     imagen: r.imagen,
     ubicacion: r.lat != null && r.lng != null ? { lat: r.lat, lng: r.lng } : null,
     estado: r.estado,
-    destacado: r.destacado
+    destacado: r.destacado,
+    destacadoSolicitado: r.destacado_solicitado,
+    auspicioSolicitado: r.auspicio_solicitado,
+    telefonoPago: r.telefono_pago,
+    creado: r.created_at
   };
 }
 
@@ -59,8 +63,8 @@ export default async function handler(req, res) {
     const lng = b.ubicacion ? b.ubicacion.lng : null;
 
     await sql`
-      INSERT INTO talleres (id, nombre, categoria, ciudad, direccion, horario, descripcion, servicios, telefono, whatsapp, email, imagen, lat, lng, estado, destacado)
-      VALUES (${id}, ${b.nombre}, ${b.categoria || ''}, ${b.ciudad}, ${b.direccion}, ${b.horario || ''}, ${b.descripcion || ''}, ${servicios}::jsonb, ${b.telefono || ''}, ${b.whatsapp}, ${b.email || ''}, ${b.imagen || ''}, ${lat}, ${lng}, 'pendiente', false)
+      INSERT INTO talleres (id, nombre, categoria, ciudad, direccion, horario, descripcion, servicios, telefono, whatsapp, email, imagen, lat, lng, estado, destacado, destacado_solicitado, auspicio_solicitado, telefono_pago)
+      VALUES (${id}, ${b.nombre}, ${b.categoria || ''}, ${b.ciudad}, ${b.direccion}, ${b.horario || ''}, ${b.descripcion || ''}, ${servicios}::jsonb, ${b.telefono || ''}, ${b.whatsapp}, ${b.email || ''}, ${b.imagen || ''}, ${lat}, ${lng}, 'pendiente', false, ${Boolean(b.destacadoSolicitado)}, ${Boolean(b.auspicioSolicitado)}, ${b.telefonoPago || ''})
     `;
     res.status(201).json({ ok: true, id });
     return;
