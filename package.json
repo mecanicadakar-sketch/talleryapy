@@ -1,0 +1,10 @@
+{
+  "name": "tallerya",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TallerYa - Encontrá tu taller más cercano",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.5"
+  }
+}

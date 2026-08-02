@@ -1,0 +1,115 @@
+import { neon } from '@neondatabase/serverless';
+
+let sqlClient;
+export function getSql() {
+  if (!sqlClient) {
+    if (!process.env.DATABASE_URL) {
+      throw new Error('Falta la variable de entorno DATABASE_URL (conexión a Neon).');
+    }
+    sqlClient = neon(process.env.DATABASE_URL);
+  }
+  return sqlClient;
+}
+
+let schemaReady = false;
+
+export async function ensureSchema() {
+  if (schemaReady) return;
+  const sql = getSql();
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS talleres (
+      id TEXT PRIMARY KEY,
+      nombre TEXT NOT NULL,
+      categoria TEXT DEFAULT '',
+      ciudad TEXT DEFAULT '',
+      direccion TEXT DEFAULT '',
+      horario TEXT DEFAULT '',
+      descripcion TEXT DEFAULT '',
+      servicios JSONB DEFAULT '[]',
+      telefono TEXT DEFAULT '',
+      whatsapp TEXT DEFAULT '',
+      email TEXT DEFAULT '',
+      imagen TEXT DEFAULT '',
+      lat DOUBLE PRECISION,
+      lng DOUBLE PRECISION,
+      estado TEXT DEFAULT 'pendiente',
+      destacado BOOLEAN DEFAULT false,
+      created_at TIMESTAMPTZ DEFAULT now()
+    )
+  `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS auspicios (
+      id TEXT PRIMARY KEY,
+      nombre TEXT NOT NULL,
+      categoria TEXT DEFAULT '',
+      horario TEXT DEFAULT '',
+      descripcion TEXT DEFAULT '',
+      servicios JSONB DEFAULT '[]',
+      direccion TEXT DEFAULT '',
+      ciudad TEXT DEFAULT '',
+      telefono TEXT DEFAULT '',
+      whatsapp TEXT DEFAULT '',
+      email TEXT DEFAULT '',
+      imagen TEXT DEFAULT '',
+      link TEXT DEFAULT '',
+      lat DOUBLE PRECISION,
+      lng DOUBLE PRECISION,
+      destacado BOOLEAN DEFAULT false,
+      created_at TIMESTAMPTZ DEFAULT now()
+    )
+  `;
+
+  const countRows = await sql`SELECT COUNT(*)::int AS count FROM talleres`;
+  if (countRows[0].count === 0) {
+    await seedTalleres(sql);
+  }
+  const countAusp = await sql`SELECT COUNT(*)::int AS count FROM auspicios`;
+  if (countAusp[0].count === 0) {
+    await seedAuspicios(sql);
+  }
+
+  schemaReady = true;
+}
+
+async function seedTalleres(sql) {
+  const seed = [
+    {
+      id: 't1', nombre: 'Mecánica Cáceres', categoria: 'Mecánica General',
+      ciudad: 'Encarnación (Itapúa)', direccion: 'Arroyo Pora, Encarnación (Itapúa)',
+      horario: 'Lun-Vie 7:00 a 18:00 hs.', descripcion: 'Taller de mecánica general con más de 10 años de experiencia.',
+      servicios: ['Motores', 'Mantenimientos', 'Frenos', 'Diagnóstico Computarizado'],
+      whatsapp: '+59598 5143218', destacado: true
+    },
+    {
+      id: 't2', nombre: 'Mecánica Dakar', categoria: 'Mecánica General',
+      ciudad: 'Encarnación (Itapúa)', direccion: 'Barrio Santa María III km. 3.5 Ruta 6 detrás de Diesa, Encarnación (Itapúa)',
+      horario: 'Lun-Vier 7:30 a 17:30', descripcion: 'Repuestos y servicios automotriz, diagnóstico computarizado e inyección electrónica.',
+      servicios: ['Diagnóstico Computarizado', 'Frenos', 'Suspensión y Dirección'],
+      whatsapp: '+59597 5635770', destacado: true
+    },
+    {
+      id: 't3', nombre: 'Mecánica Dakar - Repuestos', categoria: 'Repuestos',
+      ciudad: 'Encarnación (Itapúa)', direccion: 'Barrio Santa María III km. 3.5 Ruta 6 detrás de Diesa, Encarnación (Itapúa)',
+      horario: 'Lun Vier 7:30 a17:30', descripcion: 'Auto-repuestos y servicios de inyección electrónica.',
+      servicios: ['Accesorios', 'Frenos', 'Diagnóstico Computarizado'],
+      whatsapp: '+59597 5635770', destacado: true
+    }
+  ];
+  for (const t of seed) {
+    await sql`
+      INSERT INTO talleres (id, nombre, categoria, ciudad, direccion, horario, descripcion, servicios, whatsapp, estado, destacado)
+      VALUES (${t.id}, ${t.nombre}, ${t.categoria}, ${t.ciudad}, ${t.direccion}, ${t.horario}, ${t.descripcion}, ${JSON.stringify(t.servicios)}::jsonb, ${t.whatsapp}, 'aprobado', ${t.destacado})
+      ON CONFLICT (id) DO NOTHING
+    `;
+  }
+}
+
+async function seedAuspicios(sql) {
+  await sql`
+    INSERT INTO auspicios (id, nombre, categoria, descripcion)
+    VALUES ('s1', 'Auto Repuestos Dakar', 'Repuestos', 'Venta de Repuestos Automotriz de Varias Marcas')
+    ON CONFLICT (id) DO NOTHING
+  `;
+}
