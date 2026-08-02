@@ -6,34 +6,39 @@ funciones serverless de **Vercel** y base de datos **Postgres en Neon**.
 ## Estructura del proyecto
 
 ```
-index.html               → todo el frontend (HTML + CSS + JS en un solo archivo)
-api/_db.js                → conexión a Neon + creación de tablas + datos de ejemplo
-api/_auth.js                → login del administrador (cookie firmada)
-api/login.js                  → POST /api/login
-api/logout.js                  → POST /api/logout
-api/talleres/index.js           → GET (listar) y POST (postular) talleres
-api/talleres/[id].js             → PATCH (editar/aprobar/rechazar/destacar) y DELETE
-api/auspicios/index.js          → GET (listar) y POST (crear) auspicios
-api/auspicios/[id].js            → PATCH y DELETE
+public/index.html         → todo el frontend (HTML + CSS + JS en un solo archivo)
+api/_db.js                 → conexión a Neon + creación de tablas + datos de ejemplo
+api/_auth.js                 → login del administrador (cookie firmada)
+api/login.js                   → POST /api/login
+api/logout.js                    → POST /api/logout
+api/talleres/index.js            → GET (listar) y POST (postular) talleres
+api/talleres/[id].js              → PATCH (editar/aprobar/rechazar/destacar) y DELETE
+api/auspicios/index.js           → GET (listar) y POST (crear) auspicios
+api/auspicios/[id].js             → PATCH y DELETE
 ```
 
 No hay `vercel.json`: el proyecto usa la detección automática de Vercel ("zero-config").
-Cualquier archivo `.js` dentro de `/api` (menos los que empiezan con `_`, que son
-helpers compartidos) se convierte solo en una función serverless. `index.html` en la
-raíz se sirve como página principal. No hace falta build command ni configurar nada
-en Vercel más allá de las variables de entorno.
+`public/index.html` se sirve como página principal, y cualquier archivo `.js` dentro de
+`/api` (menos los que empiezan con `_`, que son helpers compartidos) se convierte solo
+en una función serverless. No hace falta build command ni configurar nada en Vercel
+más allá de las variables de entorno.
+
+> **Importante:** el archivo `index.html` va **dentro de la carpeta `public/`**, no en
+> la raíz del proyecto. Es la estructura con la que este proyecto quedó funcionando
+> en Vercel — si en algún momento lo movés a la raíz, el sitio va a dar error 404.
 
 ## ¿Ya habías desplegado la versión anterior y te daba error 404 en /api/login?
 
 Esa versión tenía un `vercel.json` con configuración "clásica" que no reconocía bien
 las funciones de `/api`. Esta versión ya no usa `vercel.json` — para actualizarla:
 
-1. En tu repositorio de GitHub, borrá la carpeta `public/` y el archivo `vercel.json`
-   si existen.
-2. Subí estos archivos nuevos tal cual (reemplazando lo que ya tenías).
-3. Hacé commit y push — Vercel va a desplegar automáticamente. Si no lo hace solo,
+1. En tu repositorio de GitHub, asegurate de que **no** exista ningún archivo
+   `vercel.json` (ni en la raíz, ni dentro de `api/`). Si aparece, borralo.
+2. Confirmá que `index.html` esté dentro de la carpeta `public/` (no suelto en la raíz).
+3. Subí estos archivos nuevos tal cual (reemplazando lo que ya tenías).
+4. Hacé commit y push — Vercel va a desplegar automáticamente. Si no lo hace solo,
    andá a **Deployments → (tres puntos) → Redeploy**.
-4. Probá de nuevo `https://tu-proyecto.vercel.app` y el login del administrador.
+5. Probá de nuevo `https://tu-proyecto.vercel.app` y el login del administrador.
 
 ## 1. Creá la base de datos en Neon
 
