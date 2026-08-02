@@ -14,28 +14,22 @@ export default async function handler(req, res) {
     const b = req.body || {};
     const keys = Object.keys(b);
 
-    // acciones rápidas: solo cambiar estado o destacado
-    if (keys.length === 1 && keys[0] === 'estado') {
-      await sql`UPDATE talleres SET estado = ${b.estado} WHERE id = ${id}`;
-      res.status(200).json({ ok: true });
-      return;
-    }
     if (keys.length === 1 && keys[0] === 'destacado') {
-      await sql`UPDATE talleres SET destacado = ${b.destacado} WHERE id = ${id}`;
+      await sql`UPDATE auspicios SET destacado = ${b.destacado} WHERE id = ${id}`;
       res.status(200).json({ ok: true });
       return;
     }
 
-    // edición completa
     const servicios = JSON.stringify(b.servicios || []);
     const lat = b.ubicacion ? b.ubicacion.lat : null;
     const lng = b.ubicacion ? b.ubicacion.lng : null;
     await sql`
-      UPDATE talleres SET
-        nombre = ${b.nombre}, categoria = ${b.categoria || ''}, ciudad = ${b.ciudad}, direccion = ${b.direccion},
-        horario = ${b.horario || ''}, descripcion = ${b.descripcion || ''}, servicios = ${servicios}::jsonb,
-        telefono = ${b.telefono || ''}, whatsapp = ${b.whatsapp}, email = ${b.email || ''}, imagen = ${b.imagen || ''},
-        lat = ${lat}, lng = ${lng}
+      UPDATE auspicios SET
+        nombre = ${b.nombre}, categoria = ${b.categoria || ''}, horario = ${b.horario || ''},
+        descripcion = ${b.descripcion || ''}, servicios = ${servicios}::jsonb,
+        direccion = ${b.direccion || ''}, ciudad = ${b.ciudad || ''}, telefono = ${b.telefono || ''},
+        whatsapp = ${b.whatsapp || ''}, email = ${b.email || ''}, imagen = ${b.imagen || ''},
+        link = ${b.link || ''}, lat = ${lat}, lng = ${lng}
       WHERE id = ${id}
     `;
     res.status(200).json({ ok: true });
@@ -47,7 +41,7 @@ export default async function handler(req, res) {
       res.status(401).json({ error: 'No autorizado' });
       return;
     }
-    await sql`DELETE FROM talleres WHERE id = ${id}`;
+    await sql`DELETE FROM auspicios WHERE id = ${id}`;
     res.status(200).json({ ok: true });
     return;
   }
