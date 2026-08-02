@@ -2,6 +2,7 @@ import { getSql, ensureSchema } from '../_db.js';
 import { isAuthorized } from '../_auth.js';
 
 export default async function handler(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
   await ensureSchema();
   const sql = getSql();
   const { id } = req.query;
