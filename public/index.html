@@ -179,6 +179,8 @@
   .card-body h3{font-size:17.5px;margin:0;}
   .row-icon{display:flex;gap:7px;align-items:flex-start;color:var(--gray);font-size:13.5px;line-height:1.4;}
   .row-icon svg{width:15px;height:15px;flex-shrink:0;margin-top:1.5px;color:var(--gray);}
+  a.row-icon:hover{color:var(--blue);}
+  a.row-icon:hover svg{color:var(--blue);}
   .tags{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 4px;}
   .tag{background:var(--bg);border:1px solid var(--line);color:var(--gray);font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:7px;}
   .card-actions{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:10px;gap:10px;}
@@ -582,7 +584,7 @@
 /* ============================================================
    DATA
 ============================================================ */
-const CATEGORIES = ["Mecánica General","Electricidad Automotriz","Carrocería y Pintura","Frenos","Suspensión y Dirección","Alineación y Balanceo","Diagnóstico Computarizado","Gomería","Lavadero","Grúa","Repuestos","Accesorios","Estación de Servicio","Servicios Múltiples","Otros"];
+const CATEGORIES = ["Mecánica General","Electricidad Automotriz","Carrocería y Pintura","Frenos","Suspensión y Dirección","Alineación y Balanceo","Diagnóstico Computarizado","Inyección Electrónica","Gomería","Lavadero","Grúa","Repuestos","Accesorios","Estación de Servicio","Servicios Múltiples","Otros"];
 
 /* ============================================================
    API — capa de datos real (Neon vía funciones serverless)
@@ -701,17 +703,24 @@ function tallerCard(t, destacadoStyle){
     (t.servicios.length>3 ? `<span class="tag">+${t.servicios.length-3}</span>` : '');
   const waNumber = (t.whatsapp||'').replace(/[^0-9]/g,'');
   const waLink = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent('Hola, te contacto desde TallerYa 👋')}` : '#';
+  const bannerInner = t.imagen
+    ? `<img src="${escapeAttr(t.imagen)}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
+    : ICON_WRENCH;
+
+  const mapsUrl = t.ubicacion
+    ? `https://www.google.com/maps/search/?api=1&query=${t.ubicacion.lat},${t.ubicacion.lng}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((t.direccion||'') + ', ' + (t.ciudad||''))}`;
 
   return `
   <div class="card">
     <div class="card-banner" style="background:${gradFor(t.id)}">
-      ${ICON_WRENCH}
+      ${bannerInner}
       ${t.destacado ? `<span class="badge-destacado">${ICON_STAR} Destacado</span>` : ''}
       <span class="card-cat">${escapeHtml(t.categoria)}</span>
     </div>
     <div class="card-body">
       <h3>${escapeHtml(t.nombre)}</h3>
-      <div class="row-icon">${ICON_PIN}<span>${escapeHtml(t.direccion || t.ciudad)}</span></div>
+      <a class="row-icon" href="${mapsUrl}" target="_blank" rel="noopener" style="text-decoration:none;">${ICON_PIN}<span style="text-decoration:underline;">${escapeHtml(t.direccion || t.ciudad)}</span></a>
       ${t.horario ? `<div class="row-icon">${ICON_CLOCK}<span>${escapeHtml(t.horario)}</span></div>` : ''}
       <div class="tags">${tagsHtml}</div>
       <div class="card-actions">
@@ -769,14 +778,19 @@ function renderSponsors(){
   const section = document.getElementById('auspicios-section');
   if(auspicios.length===0){ section.style.display='none'; return; }
   section.style.display='';
-  strip.innerHTML = auspicios.map(s=>`
-    <div class="sponsor-card">
+  strip.innerHTML = auspicios.map(s=>{
+    const bg = s.imagen
+      ? `linear-gradient(135deg, rgba(16,27,51,.88), rgba(27,44,85,.88)), url('${escapeAttr(s.imagen)}') center / cover no-repeat`
+      : '';
+    return `
+    <div class="sponsor-card" ${bg ? `style="background:${bg}"` : ''}>
       <span class="sponsor-cat">${escapeHtml(s.categoria)}</span>
       <h4>${escapeHtml(s.nombre)}</h4>
       <p>${escapeHtml(s.descripcion)}</p>
       ${s.link ? `<a href="${escapeAttr(s.link)}" target="_blank" rel="noopener">Ver más →</a>` : ''}
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function updateStats(){
