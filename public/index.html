@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TallerYa · Encontrá tu taller más cercano</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#101B33">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -351,9 +360,14 @@
   /* ---------- SOS / Ayuda cerca tuyo ---------- */
   .sos-banner{background:linear-gradient(120deg,#E4402C,#B92A1B);padding:22px 24px;}
   .sos-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+  .sos-phone-icon{flex-shrink:0;width:46px;}
+  .sos-phone-icon svg{width:100%;height:auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25));}
   .sos-eyebrow{display:inline-block;font-size:12.5px;font-weight:700;color:#FFD9D2;margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em;}
+  .sos-text{flex:1 1 260px;}
   .sos-text h2{color:#fff;font-size:19px;margin:0 0 4px;}
   .sos-text p{color:rgba(255,255,255,.85);font-size:13.5px;margin:0;max-width:480px;line-height:1.4;}
+  .sos-btn-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0;}
+  .sos-mobile-hint{color:rgba(255,255,255,.8);font-size:11.5px;font-weight:600;}
   .sos-btn{
     background:#fff;color:#B92A1B;font-weight:800;font-size:14.5px;
     padding:14px 22px;border-radius:12px;display:inline-flex;align-items:center;gap:9px;
@@ -362,7 +376,8 @@
   .sos-btn svg{width:18px;height:18px;}
   .sos-btn:hover{background:#FFE9E5;transform:translateY(-1px);}
   @media (max-width:640px){
-    .sos-inner{flex-direction:column;align-items:stretch;}
+    .sos-inner{flex-direction:column;align-items:stretch;text-align:center;}
+    .sos-phone-icon{margin:0 auto;}
     .sos-btn{justify-content:center;}
   }
 
@@ -454,15 +469,28 @@
 
   <section class="sos-banner">
     <div class="sos-inner">
+      <div class="sos-phone-icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <rect x="18" y="4" width="28" height="56" rx="7" stroke="rgba(255,255,255,.9)" stroke-width="2.5"/>
+          <line x1="18" y1="13" x2="46" y2="13" stroke="rgba(255,255,255,.9)" stroke-width="2.5"/>
+          <line x1="18" y1="49" x2="46" y2="49" stroke="rgba(255,255,255,.9)" stroke-width="2.5"/>
+          <circle cx="32" cy="55.5" r="1.8" fill="rgba(255,255,255,.9)"/>
+          <path d="M32 21c-5.5 0-10 4.3-10 9.7 0 6.6 10 16.3 10 16.3s10-9.7 10-16.3c0-5.4-4.5-9.7-10-9.7z" fill="#fff"/>
+          <circle cx="32" cy="30.5" r="3.6" fill="#E4402C"/>
+        </svg>
+      </div>
       <div class="sos-text">
         <span class="sos-eyebrow">🚨 ¿Se te averió el auto en la ruta?</span>
         <h2>Encontrá ayuda cerca tuyo, ahora mismo</h2>
         <p>Compartí tu ubicación y te mostramos los talleres, gomerías y grúas más cercanos a vos.</p>
       </div>
-      <button type="button" class="sos-btn" onclick="startSOS()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        Buscar ayuda cerca mío
-      </button>
+      <div class="sos-btn-wrap">
+        <button type="button" class="sos-btn" onclick="startSOS()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Buscar ayuda cerca mío
+        </button>
+        <span class="sos-mobile-hint">📱 Funciona mejor desde tu celular</span>
+      </div>
     </div>
   </section>
 
@@ -689,19 +717,6 @@
    DATA
 ============================================================ */
 const CATEGORIES = ["Mecánica General","Electricidad Automotriz","Carrocería y Pintura","Frenos","Suspensión y Dirección","Alineación y Balanceo","Diagnóstico Computarizado","Inyección Electrónica","Gomería","Lavadero","Grúa","Repuestos","Accesorios","Estación de Servicio","Servicios Múltiples","Otros"];
-
-/* ============================================================
-   CONFIGURACIÓN DE PAGO PARA "DESTACADO"
-   ⚠️ COMPLETAR con los datos reales antes de publicar.
-============================================================ */
-const DESTACADO_CONFIG = {
-  precioTaller: 'Gs. 000.000 / mes',       // COMPLETAR precio para talleres
-  precioAuspicio: 'Gs. 000.000 / mes',     // COMPLETAR precio para auspiciantes
-  banco: 'COMPLETAR banco (ej: Banco Itaú)',
-  titular: 'COMPLETAR nombre del titular',
-  cuenta: 'COMPLETAR N° de cuenta / alias',
-  qrImagen: ''  // COMPLETAR: pegar acá el link de la imagen del QR, o dejar vacío por ahora
-};
 
 /* ============================================================
    API — capa de datos real (Neon vía funciones serverless)
@@ -1009,7 +1024,9 @@ async function submitPostular(e){
     email: document.getElementById('f-email').value.trim(),
     imagen: document.getElementById('f-imagen').value.trim(),
     ubicacion: getPinCoords('f'),
-    destacadoSolicitado: document.getElementById('f-destacado-check') ? document.getElementById('f-destacado-check').checked : false
+    destacadoSolicitado: document.getElementById('f-destacado-check') ? document.getElementById('f-destacado-check').checked : false,
+    auspicioSolicitado: document.getElementById('f-auspicio-check') ? document.getElementById('f-auspicio-check').checked : false,
+    telefonoPago: document.getElementById('f-telefono-pago') ? document.getElementById('f-telefono-pago').value.trim() : ''
   };
 
   const submitBtn = document.querySelector('#postularForm .submit-btn');
@@ -1060,39 +1077,47 @@ async function logoutAdmin(){
    IMAGEN — carga real (subida desde dispositivo o link) reutilizable
 ============================================================ */
 /* ============================================================
-   BOX "DESTACAR" — checkbox + precio + QR + datos bancarios
+   BOX "DESTACAR / AUSPICIANTE" — checkbox(es) + teléfono de contacto
+   (sin mostrar precios ni datos bancarios públicamente)
 ============================================================ */
-function destacadoBoxHTML(prefix, tipo, checked){
-  const precio = tipo==='taller' ? DESTACADO_CONFIG.precioTaller : DESTACADO_CONFIG.precioAuspicio;
+function destacadoBoxHTML(prefix, opts){
+  opts = opts || {};
+  const mostrarAuspicio = !!opts.mostrarAuspicio;
+  const destacadoChecked = !!opts.destacadoChecked;
+  const auspicioChecked = !!opts.auspicioChecked;
+  const telefono = opts.telefono || '';
+  const anyChecked = destacadoChecked || auspicioChecked;
+
   return `
     <div class="field destacado-box">
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14.5px;">
-        <input type="checkbox" id="${prefix}-destacado-check" ${checked ? 'checked' : ''} onchange="toggleDestacadoPago('${prefix}')" style="width:18px;height:18px;">
-        ⭐ Quiero destacar ${tipo==='taller' ? 'mi taller' : 'este auspicio'} <span class="hint">(con costo, opcional)</span>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14.5px;${mostrarAuspicio ? 'margin-bottom:10px;' : ''}">
+        <input type="checkbox" id="${prefix}-destacado-check" ${destacadoChecked ? 'checked' : ''} onchange="toggleDestacadoPago('${prefix}')" style="width:18px;height:18px;flex-shrink:0;">
+        ⭐ Quiero que sea Destacado <span class="hint">(tiene un costo)</span>
       </label>
-      <div id="${prefix}-destacado-pago" style="${checked ? '' : 'display:none;'}margin-top:14px;">
-        <div class="pago-card">
-          <div class="pago-precio">${precio}</div>
-          <p style="margin:4px 0 14px;color:var(--gray);font-size:13px;">
-            Para destacarte, hacé la transferencia o el pago con el QR y mandanos el comprobante por WhatsApp.
-            Un administrador va a confirmar el pago y activar el destacado.
+      ${mostrarAuspicio ? `
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14.5px;">
+        <input type="checkbox" id="${prefix}-auspicio-check" ${auspicioChecked ? 'checked' : ''} onchange="toggleDestacadoPago('${prefix}')" style="width:18px;height:18px;flex-shrink:0;">
+        📢 Quiero ser auspiciante de TallerYa <span class="hint">(tiene un costo)</span>
+      </label>` : ''}
+      <div id="${prefix}-destacado-pago" style="${anyChecked ? '' : 'display:none;'}margin-top:14px;">
+        <div class="pago-card" style="text-align:left;">
+          <p style="margin:0 0 12px;color:var(--ink);font-size:13.5px;line-height:1.6;">
+            📞 Esta opción tiene un costo. Dejanos tu número de teléfono y un administrador de TallerYa se va a poner en contacto con vos a la brevedad para coordinar el pago.
           </p>
-          ${DESTACADO_CONFIG.qrImagen ? `<img src="${escapeAttr(DESTACADO_CONFIG.qrImagen)}" alt="QR de pago" style="width:160px;height:160px;object-fit:contain;border-radius:12px;border:1px solid var(--line);background:#fff;display:block;margin:0 auto 14px;">` : ''}
-          <div class="pago-datos">
-            <div><b>Banco:</b> ${escapeHtml(DESTACADO_CONFIG.banco)}</div>
-            <div><b>Titular:</b> ${escapeHtml(DESTACADO_CONFIG.titular)}</div>
-            <div><b>Cuenta / Alias:</b> ${escapeHtml(DESTACADO_CONFIG.cuenta)}</div>
-          </div>
+          <label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">Teléfono de contacto</label>
+          <input type="text" id="${prefix}-telefono-pago" value="${escapeAttr(telefono)}" placeholder="Ej: 0975 123 456" style="width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font-size:14px;box-sizing:border-box;">
         </div>
       </div>
     </div>
   `;
 }
 function toggleDestacadoPago(prefix){
-  const check = document.getElementById(prefix+'-destacado-check');
+  const d = document.getElementById(prefix+'-destacado-check');
+  const a = document.getElementById(prefix+'-auspicio-check');
   const box = document.getElementById(prefix+'-destacado-pago');
-  if(!check || !box) return;
-  box.style.display = check.checked ? '' : 'none';
+  if(!box) return;
+  const any = (d && d.checked) || (a && a.checked);
+  box.style.display = any ? '' : 'none';
 }
 
 function imageUploadHTML(prefix, label, existing){
@@ -1232,9 +1257,10 @@ async function renderAdmin(){
   wrap.innerHTML = list.map(t=>`
     <div class="admin-row">
       <div class="info">
-        <h4>${escapeHtml(t.nombre)} <span class="cat-pill">${escapeHtml(t.categoria)}</span> ${t.destacadoSolicitado ? '<span class="cat-pill" style="background:#FFF4E5;color:var(--orange-dark);">⭐ Pidió destacado</span>' : ''}</h4>
+        <h4>${escapeHtml(t.nombre)} <span class="cat-pill">${escapeHtml(t.categoria)}</span> ${t.destacadoSolicitado ? '<span class="cat-pill" style="background:#FFF4E5;color:var(--orange-dark);">⭐ Pidió destacado</span>' : ''} ${t.auspicioSolicitado ? '<span class="cat-pill" style="background:#EAF0FD;color:var(--blue);">📢 Quiere ser auspiciante</span>' : ''}</h4>
         <div class="meta">${ICON_PIN}${escapeHtml(t.direccion||t.ciudad)}</div>
         <div class="meta">📞 ${escapeHtml(t.whatsapp||t.telefono||'—')}</div>
+        ${t.telefonoPago ? `<div class="meta" style="color:var(--orange-dark);font-weight:700;">☎️ Contacto para pago: ${escapeHtml(t.telefonoPago)}</div>` : ''}
         ${t.creado ? `<div class="meta" style="color:var(--gray);">🗓️ Alta: ${formatFechaAlta(t.creado)}</div>` : ''}
       </div>
       <div class="admin-actions">
@@ -1294,7 +1320,12 @@ function openEditModal(id){
     <button class="submit-btn" onclick="saveEdit('${t.id}')">Guardar cambios</button>
   `;
   document.getElementById('editModalBg').classList.add('show');
-  document.getElementById('e-destacado-wrap').innerHTML = destacadoBoxHTML('e', 'taller', Boolean(t.destacadoSolicitado));
+  document.getElementById('e-destacado-wrap').innerHTML = destacadoBoxHTML('e', {
+    mostrarAuspicio: true,
+    destacadoChecked: Boolean(t.destacadoSolicitado),
+    auspicioChecked: Boolean(t.auspicioSolicitado),
+    telefono: t.telefonoPago || ''
+  });
   setupImageUpload('e', t.imagen);
   initPinMap('e', t.ubicacion);
 }
@@ -1312,7 +1343,9 @@ async function saveEdit(id){
     email: document.getElementById('e-email').value.trim(),
     imagen: document.getElementById('e-imagen').value.trim(),
     ubicacion: getPinCoords('e'),
-    destacadoSolicitado: document.getElementById('e-destacado-check') ? document.getElementById('e-destacado-check').checked : false
+    destacadoSolicitado: document.getElementById('e-destacado-check') ? document.getElementById('e-destacado-check').checked : false,
+    auspicioSolicitado: document.getElementById('e-auspicio-check') ? document.getElementById('e-auspicio-check').checked : false,
+    telefonoPago: document.getElementById('e-telefono-pago') ? document.getElementById('e-telefono-pago').value.trim() : ''
   };
   try{
     await apiSend('/api/talleres/'+id, 'PATCH', payload);
@@ -1517,6 +1550,7 @@ async function renderSponsorAdmin(){
         <h4>${escapeHtml(s.nombre)} <span class="cat-pill">${escapeHtml(s.categoria)}</span> ${s.destacadoSolicitado ? '<span class="cat-pill" style="background:#FFF4E5;color:var(--orange-dark);">⭐ Pidió destacado</span>' : ''}</h4>
         <div class="meta">${escapeHtml(s.descripcion)}</div>
         ${s.link ? `<div class="meta">🔗 ${escapeHtml(s.link)}</div>` : ''}
+        ${s.telefonoPago ? `<div class="meta" style="color:var(--orange-dark);font-weight:700;">☎️ Contacto para pago: ${escapeHtml(s.telefonoPago)}</div>` : ''}
         ${s.creado ? `<div class="meta" style="color:var(--gray);">🗓️ Alta: ${formatFechaAlta(s.creado)}</div>` : ''}
       </div>
       <div class="admin-actions">
@@ -1566,7 +1600,11 @@ function openSponsorModal(id){
     <button class="submit-btn" onclick="saveSponsor(${s?`'${s.id}'`:'null'})">Guardar</button>
   `;
   document.getElementById('editModalBg').classList.add('show');
-  document.getElementById('s-destacado-wrap').innerHTML = destacadoBoxHTML('s', 'auspicio', s ? Boolean(s.destacadoSolicitado) : false);
+  document.getElementById('s-destacado-wrap').innerHTML = destacadoBoxHTML('s', {
+    mostrarAuspicio: false,
+    destacadoChecked: s ? Boolean(s.destacadoSolicitado) : false,
+    telefono: s ? (s.telefonoPago || '') : ''
+  });
   setupImageUpload('s', s ? s.imagen : '');
   initPinMap('s', s ? s.ubicacion : null);
 }
@@ -1585,7 +1623,8 @@ async function saveSponsor(id){
     imagen: document.getElementById('s-imagen').value.trim(),
     link: document.getElementById('s-link').value.trim(),
     ubicacion: getPinCoords('s'),
-    destacadoSolicitado: document.getElementById('s-destacado-check') ? document.getElementById('s-destacado-check').checked : false
+    destacadoSolicitado: document.getElementById('s-destacado-check') ? document.getElementById('s-destacado-check').checked : false,
+    telefonoPago: document.getElementById('s-telefono-pago') ? document.getElementById('s-telefono-pago').value.trim() : ''
   };
   if(!payload.nombre) return;
   try{
@@ -1619,7 +1658,7 @@ function formatFechaAlta(iso){
    START
 ============================================================ */
 initSelects();
-document.getElementById('f-destacado-wrap').innerHTML = destacadoBoxHTML('f', 'taller', false);
+document.getElementById('f-destacado-wrap').innerHTML = destacadoBoxHTML('f', { mostrarAuspicio: true });
 setupImageUpload('f', '');
 go('home');
 </script>
