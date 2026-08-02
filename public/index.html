@@ -222,6 +222,8 @@
   .footer-inner{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
   .footer-inner .brand{color:#fff;font-size:18px;}
   footer small{font-size:12.5px;}
+  footer a{text-decoration:underline;}
+  footer a:hover{color:#fff;}
 
   /* ---------- Postular ---------- */
   .page-wrap{max-width:760px;margin:0 auto;padding:52px 24px 80px;}
@@ -339,6 +341,60 @@
   }
   .modal-bg.show{display:flex;}
   .modal{background:#fff;border-radius:16px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;padding:26px;}
+  .modal.modal-wide{max-width:900px;}
+
+  .destacado-box{background:#FFFBF0;border:1px solid #F5D9A8;border-radius:12px;padding:16px 18px;}
+  .pago-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;text-align:center;}
+  .pago-precio{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--orange-dark);}
+  .pago-datos{text-align:left;background:var(--bg);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.9;color:var(--ink);}
+
+  /* ---------- SOS / Ayuda cerca tuyo ---------- */
+  .sos-banner{background:linear-gradient(120deg,#E4402C,#B92A1B);padding:22px 24px;}
+  .sos-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+  .sos-eyebrow{display:inline-block;font-size:12.5px;font-weight:700;color:#FFD9D2;margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em;}
+  .sos-text h2{color:#fff;font-size:19px;margin:0 0 4px;}
+  .sos-text p{color:rgba(255,255,255,.85);font-size:13.5px;margin:0;max-width:480px;line-height:1.4;}
+  .sos-btn{
+    background:#fff;color:#B92A1B;font-weight:800;font-size:14.5px;
+    padding:14px 22px;border-radius:12px;display:inline-flex;align-items:center;gap:9px;
+    white-space:nowrap;box-shadow:0 10px 22px -10px rgba(0,0,0,.5);transition:.15s;flex-shrink:0;
+  }
+  .sos-btn svg{width:18px;height:18px;}
+  .sos-btn:hover{background:#FFE9E5;transform:translateY(-1px);}
+  @media (max-width:640px){
+    .sos-inner{flex-direction:column;align-items:stretch;}
+    .sos-btn{justify-content:center;}
+  }
+
+  .sos-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+  .sos-chip{
+    background:var(--bg);border:1px solid var(--line);color:var(--gray);
+    font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px;
+  }
+  .sos-chip.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .sos-chip:hover:not(.active){border-color:var(--blue);color:var(--blue);}
+
+  .sos-results{display:flex;flex-direction:column;gap:12px;max-height:52vh;overflow-y:auto;}
+  .sos-result-row{
+    display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+    border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+  }
+  .sos-result-info h4{margin:2px 0 6px;font-size:15.5px;}
+  .sos-dist{
+    display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;
+    color:var(--blue);background:#EAF0FD;padding:3px 10px;border-radius:999px;margin-bottom:4px;
+  }
+  .sos-result-info .meta{font-size:12.5px;color:var(--gray);}
+  .sos-result-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .sos-result-actions .wa-btn{flex:none;padding:9px 14px;}
+  .sos-result-actions .ghost-btn{padding:9px 14px;font-size:13px;}
+
+  .sos-spinner{
+    width:34px;height:34px;border-radius:50%;margin:0 auto;
+    border:3px solid var(--line);border-top-color:var(--blue);
+    animation:sos-spin 0.8s linear infinite;
+  }
+  @keyframes sos-spin{to{transform:rotate(360deg);}}
   .modal h3{margin:0 0 18px;}
   .modal .close-x{float:right;background:none;color:var(--gray);font-size:20px;line-height:1;}
 
@@ -396,6 +452,20 @@
     </div>
   </section>
 
+  <section class="sos-banner">
+    <div class="sos-inner">
+      <div class="sos-text">
+        <span class="sos-eyebrow">🚨 ¿Se te averió el auto en la ruta?</span>
+        <h2>Encontrá ayuda cerca tuyo, ahora mismo</h2>
+        <p>Compartí tu ubicación y te mostramos los talleres, gomerías y grúas más cercanos a vos.</p>
+      </div>
+      <button type="button" class="sos-btn" onclick="startSOS()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Buscar ayuda cerca mío
+      </button>
+    </div>
+  </section>
+
   <section class="block" id="destacados-section">
     <div class="block-head">
       <div>
@@ -412,7 +482,7 @@
         <h2 id="listadoTitle">Talleres encontrados</h2>
         <p>Todos los talleres aprobados y verificados.</p>
       </div>
-      <button class="ghost-btn" onclick="alert('El mapa interactivo se muestra en la versión con conexión a Google Maps.')">
+      <button class="ghost-btn" onclick="openMapaGeneral()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/></svg>
         Ver mapa
       </button>
@@ -511,6 +581,9 @@
           <input type="hidden" id="f-imagen">
         </div>
         <div class="field">
+          <div id="f-destacado-wrap"></div>
+        </div>
+        <div class="field">
           <label>Ubicación en el mapa <span class="hint">(hacé clic para marcar el pin)</span></label>
           <div class="map-picker" id="f-leaflet-map"></div>
           <div class="map-coords" id="f-mapCoords">📍 Ninguna ubicación marcada todavía.</div>
@@ -581,10 +654,33 @@
   </div>
 </div>
 
+<div class="modal-bg" id="mapaGeneralBg">
+  <div class="modal modal-wide">
+    <button class="close-x" onclick="closeMapaGeneral()">&times;</button>
+    <h3>Talleres en el mapa</h3>
+    <p style="color:var(--gray);font-size:13.5px;margin:-8px 0 14px;">Tocá un pin para ver el nombre del taller y abrirlo en Google Maps.</p>
+    <div id="mapaGeneralMap" style="height:60vh;min-height:340px;border-radius:12px;overflow:hidden;border:1px solid var(--line);"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="sosModalBg">
+  <div class="modal modal-wide">
+    <button class="close-x" onclick="closeSOS()">&times;</button>
+    <h3>🚨 Ayuda cerca tuyo</h3>
+    <div id="sosModalBody"></div>
+  </div>
+</div>
+
 <footer>
   <div class="footer-inner">
     <span class="brand">Taller<span class="ya" style="color:var(--orange);">Ya</span></span>
-    <small>Contacto: Email: tallerya7@gmail.com -  Cel:+595975635770 - TallerYa · Todos los Derechos Reservados 2026</small>
+    <div style="text-align:right;">
+      <small style="display:block;">
+        Contacto: Email: <a href="mailto:tallerya7@gmail.com" style="color:#FDC58F;">tallerya7@gmail.com</a>
+        &nbsp;-&nbsp; Cel: <a href="tel:+595975635770" style="color:#FDC58F;">+595975635770</a>
+      </small>
+      <small style="display:block;margin-top:4px;">TallerYa · Todos los Derechos Reservados 2026</small>
+    </div>
   </div>
 </footer>
 
@@ -593,6 +689,19 @@
    DATA
 ============================================================ */
 const CATEGORIES = ["Mecánica General","Electricidad Automotriz","Carrocería y Pintura","Frenos","Suspensión y Dirección","Alineación y Balanceo","Diagnóstico Computarizado","Inyección Electrónica","Gomería","Lavadero","Grúa","Repuestos","Accesorios","Estación de Servicio","Servicios Múltiples","Otros"];
+
+/* ============================================================
+   CONFIGURACIÓN DE PAGO PARA "DESTACADO"
+   ⚠️ COMPLETAR con los datos reales antes de publicar.
+============================================================ */
+const DESTACADO_CONFIG = {
+  precioTaller: 'Gs. 000.000 / mes',       // COMPLETAR precio para talleres
+  precioAuspicio: 'Gs. 000.000 / mes',     // COMPLETAR precio para auspiciantes
+  banco: 'COMPLETAR banco (ej: Banco Itaú)',
+  titular: 'COMPLETAR nombre del titular',
+  cuenta: 'COMPLETAR N° de cuenta / alias',
+  qrImagen: ''  // COMPLETAR: pegar acá el link de la imagen del QR, o dejar vacío por ahora
+};
 
 /* ============================================================
    API — capa de datos real (Neon vía funciones serverless)
@@ -734,7 +843,7 @@ function tallerCard(t, destacadoStyle){
       <div class="tags">${tagsHtml}</div>
       <div class="card-actions">
         <a class="wa-btn" href="${waLink}" target="_blank" rel="noopener">${ICON_WA} WhatsApp</a>
-        <button type="button" class="verlink" onclick="alert('Detalle de ${escapeHtml(t.nombre)}:\\n\\n${escapeHtml(t.descripcion||'Sin descripción adicional.')}')">Ver más →</button>
+        <button type="button" class="verlink" onclick="openTallerDetail('${t.id}')">Ver más →</button>
       </div>
     </div>
   </div>`;
@@ -899,7 +1008,8 @@ async function submitPostular(e){
     whatsapp,
     email: document.getElementById('f-email').value.trim(),
     imagen: document.getElementById('f-imagen').value.trim(),
-    ubicacion: getPinCoords('f')
+    ubicacion: getPinCoords('f'),
+    destacadoSolicitado: document.getElementById('f-destacado-check') ? document.getElementById('f-destacado-check').checked : false
   };
 
   const submitBtn = document.querySelector('#postularForm .submit-btn');
@@ -909,6 +1019,7 @@ async function submitPostular(e){
     await apiSend('/api/talleres', 'POST', nuevo);
     document.getElementById('postularForm').reset();
     resetPinMap('f');
+    toggleDestacadoPago('f');
     clearImage('f');
     const ok = document.getElementById('postularOk');
     ok.classList.add('show');
@@ -948,6 +1059,42 @@ async function logoutAdmin(){
 /* ============================================================
    IMAGEN — carga real (subida desde dispositivo o link) reutilizable
 ============================================================ */
+/* ============================================================
+   BOX "DESTACAR" — checkbox + precio + QR + datos bancarios
+============================================================ */
+function destacadoBoxHTML(prefix, tipo, checked){
+  const precio = tipo==='taller' ? DESTACADO_CONFIG.precioTaller : DESTACADO_CONFIG.precioAuspicio;
+  return `
+    <div class="field destacado-box">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14.5px;">
+        <input type="checkbox" id="${prefix}-destacado-check" ${checked ? 'checked' : ''} onchange="toggleDestacadoPago('${prefix}')" style="width:18px;height:18px;">
+        ⭐ Quiero destacar ${tipo==='taller' ? 'mi taller' : 'este auspicio'} <span class="hint">(con costo, opcional)</span>
+      </label>
+      <div id="${prefix}-destacado-pago" style="${checked ? '' : 'display:none;'}margin-top:14px;">
+        <div class="pago-card">
+          <div class="pago-precio">${precio}</div>
+          <p style="margin:4px 0 14px;color:var(--gray);font-size:13px;">
+            Para destacarte, hacé la transferencia o el pago con el QR y mandanos el comprobante por WhatsApp.
+            Un administrador va a confirmar el pago y activar el destacado.
+          </p>
+          ${DESTACADO_CONFIG.qrImagen ? `<img src="${escapeAttr(DESTACADO_CONFIG.qrImagen)}" alt="QR de pago" style="width:160px;height:160px;object-fit:contain;border-radius:12px;border:1px solid var(--line);background:#fff;display:block;margin:0 auto 14px;">` : ''}
+          <div class="pago-datos">
+            <div><b>Banco:</b> ${escapeHtml(DESTACADO_CONFIG.banco)}</div>
+            <div><b>Titular:</b> ${escapeHtml(DESTACADO_CONFIG.titular)}</div>
+            <div><b>Cuenta / Alias:</b> ${escapeHtml(DESTACADO_CONFIG.cuenta)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function toggleDestacadoPago(prefix){
+  const check = document.getElementById(prefix+'-destacado-check');
+  const box = document.getElementById(prefix+'-destacado-pago');
+  if(!check || !box) return;
+  box.style.display = check.checked ? '' : 'none';
+}
+
 function imageUploadHTML(prefix, label, existing){
   return `
     <div class="field">
@@ -1085,9 +1232,10 @@ async function renderAdmin(){
   wrap.innerHTML = list.map(t=>`
     <div class="admin-row">
       <div class="info">
-        <h4>${escapeHtml(t.nombre)} <span class="cat-pill">${escapeHtml(t.categoria)}</span></h4>
+        <h4>${escapeHtml(t.nombre)} <span class="cat-pill">${escapeHtml(t.categoria)}</span> ${t.destacadoSolicitado ? '<span class="cat-pill" style="background:#FFF4E5;color:var(--orange-dark);">⭐ Pidió destacado</span>' : ''}</h4>
         <div class="meta">${ICON_PIN}${escapeHtml(t.direccion||t.ciudad)}</div>
         <div class="meta">📞 ${escapeHtml(t.whatsapp||t.telefono||'—')}</div>
+        ${t.creado ? `<div class="meta" style="color:var(--gray);">🗓️ Alta: ${formatFechaAlta(t.creado)}</div>` : ''}
       </div>
       <div class="admin-actions">
         ${t.estado!=='aprobado' ? `<button class="abtn approve" onclick="setEstado('${t.id}','aprobado')">${ICON_CHECK} Aprobar</button>` : ''}
@@ -1121,6 +1269,7 @@ function openEditModal(id){
   if(!t) return;
   document.getElementById('modalTitle').textContent = 'Editar taller';
   document.getElementById('modalBody').innerHTML = `
+    ${t.creado ? `<p style="color:var(--gray);font-size:12.5px;margin:-6px 0 16px;">Alta: ${formatFechaAlta(t.creado)}</p>` : ''}
     <div class="field"><label>Nombre del taller *</label><input id="e-nombre" value="${escapeAttr(t.nombre)}"></div>
     <div class="row2">
       <div class="field"><label>Categoría</label>
@@ -1140,10 +1289,12 @@ function openEditModal(id){
     </div>
     <div class="field"><label>Email</label><input id="e-email" type="email" value="${escapeAttr(t.email||'')}"></div>
     ${imageUploadHTML('e', 'Imagen del taller', t.imagen)}
+    <div id="e-destacado-wrap"></div>
     ${mapFieldHTML('e', t.ubicacion)}
     <button class="submit-btn" onclick="saveEdit('${t.id}')">Guardar cambios</button>
   `;
   document.getElementById('editModalBg').classList.add('show');
+  document.getElementById('e-destacado-wrap').innerHTML = destacadoBoxHTML('e', 'taller', Boolean(t.destacadoSolicitado));
   setupImageUpload('e', t.imagen);
   initPinMap('e', t.ubicacion);
 }
@@ -1160,7 +1311,8 @@ async function saveEdit(id){
     whatsapp: document.getElementById('e-whatsapp').value.trim(),
     email: document.getElementById('e-email').value.trim(),
     imagen: document.getElementById('e-imagen').value.trim(),
-    ubicacion: getPinCoords('e')
+    ubicacion: getPinCoords('e'),
+    destacadoSolicitado: document.getElementById('e-destacado-check') ? document.getElementById('e-destacado-check').checked : false
   };
   try{
     await apiSend('/api/talleres/'+id, 'PATCH', payload);
@@ -1170,6 +1322,178 @@ async function saveEdit(id){
     alert('No se pudo guardar: ' + err.message);
   }
 }
+function openTallerDetail(id){
+  const t = talleres.find(x=>x.id===id);
+  if(!t) return;
+  const waNumber = (t.whatsapp||'').replace(/[^0-9]/g,'');
+  const waLink = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent('Hola, te contacto desde TallerYa 👋')}` : '';
+  const mapsUrl = t.ubicacion
+    ? `https://www.google.com/maps/search/?api=1&query=${t.ubicacion.lat},${t.ubicacion.lng}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((t.direccion||'') + ', ' + (t.ciudad||''))}`;
+
+  document.getElementById('modalTitle').textContent = t.nombre;
+  document.getElementById('modalBody').innerHTML = `
+    ${t.imagen ? `<img src="${escapeAttr(t.imagen)}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:180px;object-fit:cover;border-radius:12px;margin-bottom:16px;display:block;">` : ''}
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+      <span class="cat-pill">${escapeHtml(t.categoria)}</span>
+      ${t.destacado ? `<span class="cat-pill" style="background:#FFF4E5;color:var(--orange-dark);">${ICON_STAR} Destacado</span>` : ''}
+    </div>
+    ${t.descripcion ? `<p style="color:var(--gray);font-size:14.5px;line-height:1.6;margin:0 0 16px;">${escapeHtml(t.descripcion)}</p>` : ''}
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+      <a href="${mapsUrl}" target="_blank" rel="noopener" class="row-icon" style="text-decoration:none;font-size:14px;">${ICON_PIN}<span style="text-decoration:underline;">${escapeHtml(t.direccion || t.ciudad)}</span></a>
+      ${t.horario ? `<div class="row-icon" style="font-size:14px;">${ICON_CLOCK}<span>${escapeHtml(t.horario)}</span></div>` : ''}
+    </div>
+    ${t.servicios && t.servicios.length ? `<div class="tags" style="margin-bottom:20px;">${t.servicios.map(s=>`<span class="tag">${escapeHtml(s)}</span>`).join('')}</div>` : ''}
+    ${waLink ? `<a class="wa-btn" href="${waLink}" target="_blank" rel="noopener" style="width:100%;box-sizing:border-box;">${ICON_WA} Contactar por WhatsApp</a>` : ''}
+  `;
+  document.getElementById('editModalBg').classList.add('show');
+}
+
+/* ============================================================
+   SOS — Ayuda cerca tuyo (geolocalización + distancia)
+============================================================ */
+const SOS_CATEGORIES = ['Todas','Mecánica General','Grúa','Gomería','Electricidad Automotriz'];
+let sosCoords = null;
+let sosCategoryFilter = 'Todas';
+
+function distanciaKm(lat1, lng1, lat2, lng2){
+  const R = 6371;
+  const dLat = (lat2-lat1) * Math.PI/180;
+  const dLng = (lng2-lng1) * Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+async function startSOS(){
+  document.getElementById('sosModalBg').classList.add('show');
+  sosCoords = null;
+  sosCategoryFilter = 'Todas';
+  renderSOSLoading();
+
+  if(!navigator.geolocation){
+    renderSOSError('Tu navegador no admite geolocalización. Probá buscar manualmente desde el buscador de arriba.');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    (pos)=>{
+      sosCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      renderSOSResults();
+    },
+    (err)=>{
+      renderSOSError('No pudimos acceder a tu ubicación. Activá el permiso de ubicación en tu navegador e intentá de nuevo, o buscá manualmente desde el buscador de arriba.');
+    },
+    { enableHighAccuracy:true, timeout:10000, maximumAge:60000 }
+  );
+}
+
+function renderSOSLoading(){
+  document.getElementById('sosModalBody').innerHTML = `
+    <div style="text-align:center;padding:44px 10px;">
+      <div class="sos-spinner"></div>
+      <p style="margin-top:16px;color:var(--gray);font-size:14px;">Buscando tu ubicación...</p>
+    </div>
+  `;
+}
+
+function renderSOSError(msg){
+  document.getElementById('sosModalBody').innerHTML = `
+    <div style="text-align:center;padding:30px 10px;">
+      <p style="color:var(--ink);font-weight:700;margin-bottom:8px;">No pudimos encontrar tu ubicación</p>
+      <p style="color:var(--gray);font-size:13.5px;margin-bottom:20px;max-width:420px;margin-left:auto;margin-right:auto;">${escapeHtml(msg)}</p>
+      <button class="submit-btn" style="width:auto;padding:12px 26px;" onclick="startSOS()">Reintentar</button>
+    </div>
+  `;
+}
+
+function renderSOSResults(){
+  if(!sosCoords) return;
+  const chips = SOS_CATEGORIES.map(c=>
+    `<button type="button" class="sos-chip ${c===sosCategoryFilter?'active':''}" onclick="sosCategoryFilter='${c}';renderSOSResults()">${c}</button>`
+  ).join('');
+
+  const cercanos = talleres
+    .filter(t=>t.estado==='aprobado' && t.ubicacion)
+    .filter(t=> sosCategoryFilter==='Todas' || t.categoria===sosCategoryFilter)
+    .map(t=>({ ...t, _dist: distanciaKm(sosCoords.lat, sosCoords.lng, t.ubicacion.lat, t.ubicacion.lng) }))
+    .sort((a,b)=>a._dist-b._dist)
+    .slice(0, 15);
+
+  if(cercanos.length===0){
+    document.getElementById('sosModalBody').innerHTML = `
+      <div class="sos-chips">${chips}</div>
+      <div class="empty">${ICON_INBOX}<div>No encontramos talleres con ubicación cargada${sosCategoryFilter!=='Todas' ? ' en esta categoría' : ''} todavía.</div></div>
+    `;
+    return;
+  }
+
+  document.getElementById('sosModalBody').innerHTML = `
+    <div class="sos-chips">${chips}</div>
+    <div class="sos-results">
+      ${cercanos.map(t=>{
+        const waNumber = (t.whatsapp||'').replace(/[^0-9]/g,'');
+        const waLink = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent('Hola, necesito ayuda urgente y te encontré en TallerYa 🚨')}` : '';
+        const dirUrl = `https://www.google.com/maps/dir/?api=1&destination=${t.ubicacion.lat},${t.ubicacion.lng}`;
+        return `
+        <div class="sos-result-row">
+          <div class="sos-result-info">
+            <span class="sos-dist">📍 ${t._dist.toFixed(1)} km</span>
+            <h4>${escapeHtml(t.nombre)}</h4>
+            <span class="cat-pill">${escapeHtml(t.categoria)}</span>
+            <div class="meta" style="margin-top:5px;">${escapeHtml(t.direccion||t.ciudad||'')}</div>
+          </div>
+          <div class="sos-result-actions">
+            ${waLink ? `<a class="wa-btn" href="${waLink}" target="_blank" rel="noopener">${ICON_WA} WhatsApp</a>` : ''}
+            <a class="ghost-btn" href="${dirUrl}" target="_blank" rel="noopener">Cómo llegar</a>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+function closeSOS(){
+  document.getElementById('sosModalBg').classList.remove('show');
+}
+
+function openMapaGeneral(){
+  const conUbicacion = talleres.filter(t=>t.estado==='aprobado' && t.ubicacion);
+  if(conUbicacion.length===0){
+    alert('Todavía ningún taller aprobado tiene una ubicación marcada en el mapa. Podés agregarla desde el panel de Administrador, editando cada taller.');
+    return;
+  }
+  document.getElementById('mapaGeneralBg').classList.add('show');
+
+  setTimeout(()=>{
+    if(activeMaps['general']){ activeMaps['general'].map.remove(); delete activeMaps['general']; }
+    const container = document.getElementById('mapaGeneralMap');
+    container.innerHTML = '';
+    const map = L.map(container).setView(MAP_DEFAULT_CENTER, 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    const icon = L.divIcon({ html: pinIconHTML(), className:'', iconSize:[32,32], iconAnchor:[16,32] });
+    const bounds = [];
+    conUbicacion.forEach(t=>{
+      const marker = L.marker([t.ubicacion.lat, t.ubicacion.lng], {icon}).addTo(map);
+      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${t.ubicacion.lat},${t.ubicacion.lng}`;
+      marker.bindPopup(`<b>${escapeHtml(t.nombre)}</b><br>${escapeHtml(t.direccion||t.ciudad||'')}<br><a href="${mapsUrl}" target="_blank" rel="noopener">Abrir en Google Maps →</a>`);
+      bounds.push([t.ubicacion.lat, t.ubicacion.lng]);
+    });
+    if(bounds.length>1) map.fitBounds(bounds, {padding:[30,30]});
+    else map.setView(bounds[0], 15);
+
+    activeMaps['general'] = { map };
+    setTimeout(()=> map.invalidateSize(), 60);
+  }, 30);
+}
+
+function closeMapaGeneral(){
+  document.getElementById('mapaGeneralBg').classList.remove('show');
+  if(activeMaps['general']){ activeMaps['general'].map.remove(); delete activeMaps['general']; }
+}
+
 function closeModal(){
   document.getElementById('editModalBg').classList.remove('show');
   ['e','s'].forEach(p=>{
@@ -1190,9 +1514,10 @@ async function renderSponsorAdmin(){
   wrap.innerHTML = auspicios.map(s=>`
     <div class="admin-row">
       <div class="info">
-        <h4>${escapeHtml(s.nombre)} <span class="cat-pill">${escapeHtml(s.categoria)}</span></h4>
+        <h4>${escapeHtml(s.nombre)} <span class="cat-pill">${escapeHtml(s.categoria)}</span> ${s.destacadoSolicitado ? '<span class="cat-pill" style="background:#FFF4E5;color:var(--orange-dark);">⭐ Pidió destacado</span>' : ''}</h4>
         <div class="meta">${escapeHtml(s.descripcion)}</div>
         ${s.link ? `<div class="meta">🔗 ${escapeHtml(s.link)}</div>` : ''}
+        ${s.creado ? `<div class="meta" style="color:var(--gray);">🗓️ Alta: ${formatFechaAlta(s.creado)}</div>` : ''}
       </div>
       <div class="admin-actions">
         <button class="abtn feature ${s.destacado?'on':''}" onclick="toggleSponsorDestacado('${s.id}')">${ICON_STAR}</button>
@@ -1217,6 +1542,7 @@ function openSponsorModal(id){
   const s = id ? auspicios.find(x=>x.id===id) : null;
   document.getElementById('modalTitle').textContent = s ? 'Editar auspicio' : 'Nuevo auspicio';
   document.getElementById('modalBody').innerHTML = `
+    ${s && s.creado ? `<p style="color:var(--gray);font-size:12.5px;margin:-6px 0 16px;">Alta: ${formatFechaAlta(s.creado)}</p>` : ''}
     <div class="field"><label>Nombre *</label><input id="s-nombre" value="${s?escapeAttr(s.nombre):''}"></div>
     <div class="row2">
       <div class="field"><label>Categoría</label><input id="s-categoria" value="${s?escapeAttr(s.categoria):''}" placeholder="Repuestos, Lubricentro..."></div>
@@ -1235,10 +1561,12 @@ function openSponsorModal(id){
     <div class="field"><label>Email</label><input id="s-email" type="email" value="${s?escapeAttr(s.email||''):''}"></div>
     ${imageUploadHTML('s', 'Imagen', s ? s.imagen : '')}
     <div class="field"><label>Link del auspicio <span class="hint">(opcional)</span></label><input id="s-link" value="${s?escapeAttr(s.link||''):''}" placeholder="https://..."></div>
+    <div id="s-destacado-wrap"></div>
     ${mapFieldHTML('s', s?s.ubicacion:null)}
     <button class="submit-btn" onclick="saveSponsor(${s?`'${s.id}'`:'null'})">Guardar</button>
   `;
   document.getElementById('editModalBg').classList.add('show');
+  document.getElementById('s-destacado-wrap').innerHTML = destacadoBoxHTML('s', 'auspicio', s ? Boolean(s.destacadoSolicitado) : false);
   setupImageUpload('s', s ? s.imagen : '');
   initPinMap('s', s ? s.ubicacion : null);
 }
@@ -1256,7 +1584,8 @@ async function saveSponsor(id){
     email: document.getElementById('s-email').value.trim(),
     imagen: document.getElementById('s-imagen').value.trim(),
     link: document.getElementById('s-link').value.trim(),
-    ubicacion: getPinCoords('s')
+    ubicacion: getPinCoords('s'),
+    destacadoSolicitado: document.getElementById('s-destacado-check') ? document.getElementById('s-destacado-check').checked : false
   };
   if(!payload.nombre) return;
   try{
@@ -1276,11 +1605,21 @@ function escapeHtml(str){
   return String(str??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 function escapeAttr(str){ return escapeHtml(str); }
+function formatFechaAlta(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  if(isNaN(d.getTime())) return '';
+  const fecha = d.toLocaleDateString('es-PY', { day:'2-digit', month:'2-digit', year:'numeric' });
+  const dias = Math.max(0, Math.floor((Date.now() - d.getTime()) / 86400000));
+  const diasTxt = dias===0 ? 'hoy' : dias===1 ? 'hace 1 día' : `hace ${dias} días`;
+  return `${fecha} · ${diasTxt}`;
+}
 
 /* ============================================================
    START
 ============================================================ */
 initSelects();
+document.getElementById('f-destacado-wrap').innerHTML = destacadoBoxHTML('f', 'taller', false);
 setupImageUpload('f', '');
 go('home');
 </script>
