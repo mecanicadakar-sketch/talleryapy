@@ -21,7 +21,8 @@ function rowToTaller(r) {
     destacadoSolicitado: r.destacado_solicitado,
     auspicioSolicitado: r.auspicio_solicitado,
     telefonoPago: r.telefono_pago,
-    creado: r.created_at
+    creado: r.created_at,
+    codigo: 'TY-T-' + String(r.folio).padStart(6, '0')
   };
 }
 
@@ -62,11 +63,13 @@ export default async function handler(req, res) {
     const lat = b.ubicacion ? b.ubicacion.lat : null;
     const lng = b.ubicacion ? b.ubicacion.lng : null;
 
-    await sql`
+    const inserted = await sql`
       INSERT INTO talleres (id, nombre, categoria, ciudad, direccion, horario, descripcion, servicios, telefono, whatsapp, email, imagen, lat, lng, estado, destacado, destacado_solicitado, auspicio_solicitado, telefono_pago)
       VALUES (${id}, ${b.nombre}, ${b.categoria || ''}, ${b.ciudad}, ${b.direccion}, ${b.horario || ''}, ${b.descripcion || ''}, ${servicios}::jsonb, ${b.telefono || ''}, ${b.whatsapp}, ${b.email || ''}, ${b.imagen || ''}, ${lat}, ${lng}, 'pendiente', false, ${Boolean(b.destacadoSolicitado)}, ${Boolean(b.auspicioSolicitado)}, ${b.telefonoPago || ''})
+      RETURNING folio
     `;
-    res.status(201).json({ ok: true, id });
+    const codigo = 'TY-T-' + String(inserted[0].folio).padStart(6, '0');
+    res.status(201).json({ ok: true, id, codigo });
     return;
   }
 

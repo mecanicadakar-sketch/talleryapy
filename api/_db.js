@@ -64,8 +64,10 @@ export async function ensureSchema() {
   await sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS destacado_solicitado BOOLEAN DEFAULT false`;
   await sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS auspicio_solicitado BOOLEAN DEFAULT false`;
   await sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS telefono_pago TEXT DEFAULT ''`;
+  await sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS folio SERIAL`;
   await sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS destacado_solicitado BOOLEAN DEFAULT false`;
   await sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS telefono_pago TEXT DEFAULT ''`;
+  await sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS folio SERIAL`;
 
   const countRows = await sql`SELECT COUNT(*)::int AS count FROM talleres`;
   if (countRows[0].count === 0) {

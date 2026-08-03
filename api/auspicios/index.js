@@ -20,7 +20,8 @@ function rowToAuspicio(r) {
     destacado: r.destacado,
     destacadoSolicitado: r.destacado_solicitado,
     telefonoPago: r.telefono_pago,
-    creado: r.created_at
+    creado: r.created_at,
+    codigo: 'TY-A-' + String(r.folio).padStart(6, '0')
   };
 }
 
@@ -50,11 +51,13 @@ export default async function handler(req, res) {
     const lat = b.ubicacion ? b.ubicacion.lat : null;
     const lng = b.ubicacion ? b.ubicacion.lng : null;
 
-    await sql`
+    const inserted = await sql`
       INSERT INTO auspicios (id, nombre, categoria, horario, descripcion, servicios, direccion, ciudad, telefono, whatsapp, email, imagen, link, lat, lng, destacado, destacado_solicitado, telefono_pago)
       VALUES (${id}, ${b.nombre}, ${b.categoria || ''}, ${b.horario || ''}, ${b.descripcion || ''}, ${servicios}::jsonb, ${b.direccion || ''}, ${b.ciudad || ''}, ${b.telefono || ''}, ${b.whatsapp || ''}, ${b.email || ''}, ${b.imagen || ''}, ${b.link || ''}, ${lat}, ${lng}, false, ${Boolean(b.destacadoSolicitado)}, ${b.telefonoPago || ''})
+      RETURNING folio
     `;
-    res.status(201).json({ ok: true, id });
+    const codigo = 'TY-A-' + String(inserted[0].folio).padStart(6, '0');
+    res.status(201).json({ ok: true, id, codigo });
     return;
   }
 
