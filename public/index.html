@@ -186,6 +186,30 @@
     box-shadow:0 4px 10px rgba(0,0,0,.15);
   }
   .badge-destacado svg{width:11px;height:11px;fill:var(--orange-dark);}
+  .fav-btn{
+    position:absolute;top:10px;left:10px;z-index:2;
+    width:32px;height:32px;border-radius:50%;
+    background:rgba(16,27,51,.5);backdrop-filter:blur(2px);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;transition:.15s;
+  }
+  .fav-btn svg{width:16px;height:16px;}
+  .fav-btn:hover{background:rgba(16,27,51,.7);}
+  .fav-btn.active{background:#E4402C;color:#fff;}
+  .fav-btn.active svg{fill:#fff;}
+  .open-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap;}
+  .open-badge.open{background:#ECFDF3;color:#067647;}
+  .open-badge.closed{background:#FEF3F2;color:#D92D20;}
+  .icon-btn{
+    width:38px;height:38px;border-radius:9px;flex-shrink:0;
+    background:var(--bg);border:1px solid var(--line);color:var(--gray);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .icon-btn svg{width:16px;height:16px;}
+  .icon-btn:hover{border-color:var(--blue);color:var(--blue);}
+  .icon-btn.active{background:#FEF3F2;border-color:#E4402C;color:#E4402C;}
+  .icon-btn.active svg{fill:#E4402C;}
+  .ghost-btn.active{background:#FEF3F2;border-color:#F5A99E;color:#D92D20;}
   .card-cat{
     position:absolute;bottom:10px;left:10px;
     background:rgba(255,255,255,.94);color:var(--orange-dark);
@@ -557,10 +581,16 @@
         <h2 id="listadoTitle">Talleres encontrados</h2>
         <p>Todos los talleres aprobados y verificados.</p>
       </div>
-      <button class="ghost-btn" onclick="openMapaGeneral()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/></svg>
-        Ver mapa
-      </button>
+      <div style="display:flex;gap:10px;">
+        <button class="ghost-btn" id="favFilterBtn" onclick="toggleSoloFavoritos()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          Favoritos
+        </button>
+        <button class="ghost-btn" onclick="openMapaGeneral()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/></svg>
+          Ver mapa
+        </button>
+      </div>
     </div>
     <div class="grid" id="listadoGrid"></div>
   </section>
@@ -829,6 +859,8 @@ const ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 const ICON_INBOX = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>';
 const ICON_PHONE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>';
 const ICON_MAIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z"/><polyline points="22 6 12 13 2 6"/></svg>';
+const ICON_HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>';
+const ICON_SHARE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>';
 
 const CARD_GRADIENTS = [
   "linear-gradient(135deg,#1749B8,#0F3690)",
@@ -899,6 +931,85 @@ function initSelects(){
 /* ============================================================
    CARD RENDER (public)
 ============================================================ */
+/* ============================================================
+   ABIERTO AHORA / CERRADO (mejor esfuerzo, a partir del texto de horario)
+============================================================ */
+function horarioAbierto(horarioStr){
+  try{
+    if(!horarioStr) return null;
+    const lower = horarioStr.toLowerCase();
+    const DIAS = {dom:0, lun:1, mar:2, mie:3, 'mié':3, jue:4, vier:5, vie:5, sab:6, 'sáb':6};
+    const dayMatches = [...lower.matchAll(/dom|lun|mar|mi[ée]|jue|vier?|s[áa]b/g)].map(m=>DIAS[m[0]]).filter(d=>d!==undefined);
+    if(dayMatches.length===0) return null;
+    const startDay = dayMatches[0];
+    const endDay = dayMatches[dayMatches.length-1];
+
+    const timeMatches = [...horarioStr.matchAll(/(\d{1,2})(?::(\d{2}))?/g)];
+    if(timeMatches.length<2) return null;
+    const toMin = m => parseInt(m[1],10)*60 + (m[2]?parseInt(m[2],10):0);
+    const startMin = toMin(timeMatches[0]);
+    const endMin = toMin(timeMatches[timeMatches.length-1]);
+
+    const now = new Date();
+    const curDay = now.getDay();
+    const curMin = now.getHours()*60 + now.getMinutes();
+
+    const dentroDia = startDay<=endDay ? (curDay>=startDay && curDay<=endDay) : (curDay>=startDay || curDay<=endDay);
+    const dentroHora = startMin<=endMin ? (curMin>=startMin && curMin<=endMin) : (curMin>=startMin || curMin<=endMin);
+
+    return dentroDia && dentroHora;
+  }catch(e){ return null; }
+}
+function abiertoBadgeHTML(horarioStr){
+  const abierto = horarioAbierto(horarioStr);
+  if(abierto===null) return '';
+  return abierto
+    ? `<span class="open-badge open">🟢 Abierto ahora</span>`
+    : `<span class="open-badge closed">🔴 Cerrado</span>`;
+}
+
+/* ============================================================
+   FAVORITOS (guardados en el navegador, sin necesidad de cuenta)
+============================================================ */
+const FAV_KEY = 'tallerya_favoritos';
+let soloFavoritos = false;
+function getFavoritos(){
+  try{ return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); }catch(e){ return []; }
+}
+function esFavorito(id){ return getFavoritos().includes(id); }
+function toggleFavorito(id){
+  let favs = getFavoritos();
+  favs = favs.includes(id) ? favs.filter(x=>x!==id) : [...favs, id];
+  localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+  renderDestacados();
+  renderListado();
+}
+function toggleSoloFavoritos(){
+  soloFavoritos = !soloFavoritos;
+  const btn = document.getElementById('favFilterBtn');
+  if(btn) btn.classList.toggle('active', soloFavoritos);
+  renderListado();
+}
+
+/* ============================================================
+   COMPARTIR
+============================================================ */
+function shareTaller(id, e){
+  if(e) e.stopPropagation();
+  const t = talleres.find(x=>x.id===id);
+  if(!t) return;
+  const url = window.location.origin + window.location.pathname + '?taller=' + id;
+  if(navigator.share){
+    navigator.share({ title: t.nombre, text: `Mirá ${t.nombre} en TallerYa`, url }).catch(()=>{});
+  }else if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(()=>{
+      alert('Link copiado 📋\n' + url);
+    }).catch(()=>{ prompt('Copiá este link para compartir:', url); });
+  }else{
+    prompt('Copiá este link para compartir:', url);
+  }
+}
+
 function tallerCard(t, destacadoStyle){
   const tagsHtml = t.servicios.slice(0,3).map(s=>`<span class="tag">${escapeHtml(s)}</span>`).join('') +
     (t.servicios.length>3 ? `<span class="tag">+${t.servicios.length-3}</span>` : '');
@@ -912,20 +1023,24 @@ function tallerCard(t, destacadoStyle){
     ? `https://www.google.com/maps/search/?api=1&query=${t.ubicacion.lat},${t.ubicacion.lng}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((t.direccion||'') + ', ' + (t.ciudad||''))}`;
 
+  const fav = esFavorito(t.id);
+
   return `
   <div class="card">
     <div class="card-banner" style="background:${gradFor(t.id)}">
       ${bannerInner}
+      <button type="button" class="fav-btn ${fav?'active':''}" onclick="toggleFavorito('${t.id}')" aria-label="Favorito">${ICON_HEART}</button>
       ${t.destacado ? `<span class="badge-destacado">${ICON_STAR} Destacado</span>` : ''}
       <span class="card-cat">${escapeHtml(t.categoria)}</span>
     </div>
     <div class="card-body">
       <h3>${escapeHtml(t.nombre)}</h3>
       <a class="row-icon" href="${mapsUrl}" target="_blank" rel="noopener" style="text-decoration:none;">${ICON_PIN}<span style="text-decoration:underline;">${escapeHtml(t.direccion || t.ciudad)}</span></a>
-      ${t.horario ? `<div class="row-icon">${ICON_CLOCK}<span>${escapeHtml(t.horario)}</span></div>` : ''}
+      ${t.horario ? `<div class="row-icon">${ICON_CLOCK}<span>${escapeHtml(t.horario)}</span> ${abiertoBadgeHTML(t.horario)}</div>` : ''}
       <div class="tags">${tagsHtml}</div>
       <div class="card-actions">
         <a class="wa-btn" href="${waLink}" target="_blank" rel="noopener">${ICON_WA} WhatsApp</a>
+        <button type="button" class="icon-btn" onclick="shareTaller('${t.id}', event)" aria-label="Compartir">${ICON_SHARE}</button>
         <button type="button" class="verlink" onclick="openTallerDetail('${t.id}')">Ver más →</button>
       </div>
     </div>
@@ -942,6 +1057,18 @@ async function renderHome(){
   renderListado();
   renderSponsors();
   updateStats();
+  abrirTallerCompartidoSiCorresponde();
+}
+
+let tallerCompartidoAbierto = false;
+function abrirTallerCompartidoSiCorresponde(){
+  if(tallerCompartidoAbierto) return;
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('taller');
+  if(id && talleres.some(t=>t.id===id)){
+    tallerCompartidoAbierto = true;
+    openTallerDetail(id);
+  }
 }
 
 function renderDestacados(){
@@ -959,6 +1086,10 @@ function renderListado(){
   const q = (document.getElementById('searchInput').value||'').toLowerCase().trim();
   const cat = document.getElementById('categoryFilter').value;
   let list = talleres.filter(t=>t.estado==='aprobado');
+  if(soloFavoritos){
+    const favs = getFavoritos();
+    list = list.filter(t=>favs.includes(t.id));
+  }
   if(cat && cat!=='Todas') list = list.filter(t=>t.categoria===cat);
   if(q){
     list = list.filter(t=>
@@ -967,10 +1098,14 @@ function renderListado(){
       t.servicios.some(s=>s.toLowerCase().includes(q))
     );
   }
-  document.getElementById('listadoTitle').textContent = `${list.length} taller${list.length===1?'':'es'} encontrado${list.length===1?'':'s'}`;
+  document.getElementById('listadoTitle').textContent = soloFavoritos
+    ? `${list.length} favorito${list.length===1?'':'s'}`
+    : `${list.length} taller${list.length===1?'':'es'} encontrado${list.length===1?'':'s'}`;
   const grid = document.getElementById('listadoGrid');
   if(list.length===0){
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">${ICON_INBOX}<div>No encontramos talleres con esos filtros.<br>Probá con otra búsqueda.</div></div>`;
+    grid.innerHTML = soloFavoritos
+      ? `<div class="empty" style="grid-column:1/-1;">${ICON_HEART}<div>Todavía no guardaste ningún taller como favorito.<br>Tocá el corazón en cualquier tarjeta para guardarlo.</div></div>`
+      : `<div class="empty" style="grid-column:1/-1;">${ICON_INBOX}<div>No encontramos talleres con esos filtros.<br>Probá con otra búsqueda.</div></div>`;
     return;
   }
   grid.innerHTML = list.map(t=>tallerCard(t)).join('');
@@ -1441,9 +1576,14 @@ function openTallerDetail(id){
   document.getElementById('modalTitle').textContent = t.nombre;
   document.getElementById('modalBody').innerHTML = `
     ${t.imagen ? `<img src="${escapeAttr(t.imagen)}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:180px;object-fit:cover;border-radius:12px;margin-bottom:16px;display:block;">` : ''}
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center;">
       <span class="cat-pill">${escapeHtml(t.categoria)}</span>
       ${t.destacado ? `<span class="cat-pill" style="background:#FFF4E5;color:var(--orange-dark);">${ICON_STAR} Destacado</span>` : ''}
+      ${abiertoBadgeHTML(t.horario)}
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <button type="button" class="icon-btn ${esFavorito(t.id)?'active':''}" id="detailFavBtn" onclick="toggleFavorito('${t.id}');document.getElementById('detailFavBtn').classList.toggle('active', esFavorito('${t.id}'));" aria-label="Favorito">${ICON_HEART}</button>
+        <button type="button" class="icon-btn" onclick="shareTaller('${t.id}')" aria-label="Compartir">${ICON_SHARE}</button>
+      </div>
     </div>
     ${t.descripcion ? `<p style="color:var(--gray);font-size:14.5px;line-height:1.6;margin:0 0 16px;">${escapeHtml(t.descripcion)}</p>` : ''}
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
