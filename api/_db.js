@@ -69,6 +69,14 @@ export async function ensureSchema() {
   await sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS telefono_pago TEXT DEFAULT ''`;
   await sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS folio SERIAL`;
 
+  await sql`
+    CREATE TABLE IF NOT EXISTS categorias (
+      id SERIAL PRIMARY KEY,
+      nombre TEXT UNIQUE NOT NULL,
+      orden INT DEFAULT 0
+    )
+  `;
+
   const countRows = await sql`SELECT COUNT(*)::int AS count FROM talleres`;
   if (countRows[0].count === 0) {
     await seedTalleres(sql);
@@ -76,6 +84,10 @@ export async function ensureSchema() {
   const countAusp = await sql`SELECT COUNT(*)::int AS count FROM auspicios`;
   if (countAusp[0].count === 0) {
     await seedAuspicios(sql);
+  }
+  const countCat = await sql`SELECT COUNT(*)::int AS count FROM categorias`;
+  if (countCat[0].count === 0) {
+    await seedCategorias(sql);
   }
 
   schemaReady = true;
@@ -120,4 +132,19 @@ async function seedAuspicios(sql) {
     VALUES ('s1', 'Auto Repuestos Dakar', 'Repuestos', 'Venta de Repuestos Automotriz de Varias Marcas')
     ON CONFLICT (id) DO NOTHING
   `;
+}
+
+async function seedCategorias(sql) {
+  const nombres = [
+    "Mecánica General", "Electricidad Automotriz", "Carrocería y Pintura", "Frenos",
+    "Suspensión y Dirección", "Alineación y Balanceo", "Diagnóstico Computarizado",
+    "Inyección Electrónica", "Gomería", "Lavadero", "Grúa", "Repuestos",
+    "Accesorios", "Estación de Servicio", "Servicios Múltiples", "Otros"
+  ];
+  for (let i = 0; i < nombres.length; i++) {
+    await sql`
+      INSERT INTO categorias (nombre, orden) VALUES (${nombres[i]}, ${i})
+      ON CONFLICT (nombre) DO NOTHING
+    `;
+  }
 }
