@@ -249,7 +249,7 @@
     height:110px;position:relative;overflow:hidden;
     background:linear-gradient(135deg,var(--navy),#1B2C55);
   }
-  .sponsor-banner img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+  .sponsor-banner img{width:100%;height:100%;object-fit:contain;position:absolute;inset:0;}
   .sponsor-banner::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg, rgba(255,255,255,.06) 0 2px, transparent 2px 20px);pointer-events:none;}
   .sponsor-body{padding:16px 18px 18px;}
   .sponsor-cat{display:inline-block;background:rgba(245,146,59,.14);color:var(--orange-dark);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;margin-bottom:10px;position:relative;z-index:1;}
@@ -292,7 +292,7 @@
   .img-preview-wrap{
     border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg);
   }
-  .img-preview{width:100%;max-height:170px;object-fit:cover;border-radius:9px;display:block;}
+  .img-preview{width:100%;max-height:170px;object-fit:contain;background:var(--bg);border-radius:9px;display:block;}
   .img-preview-actions{display:flex;justify-content:flex-end;margin-top:10px;}
   .img-remove-btn{
     font-size:12.5px;font-weight:700;color:#D92D20;background:#FEF3F2;
@@ -723,6 +723,7 @@
       <h1>Gestión de talleres</h1>
       <div class="admin-links">
         <button type="button" class="ghost-btn" onclick="go('adminAuspicios')">📣 Auspicios</button>
+        <button type="button" class="ghost-btn" onclick="go('adminCategorias')">🏷️ Categorías</button>
         <button type="button" class="ghost-btn" onclick="logoutAdmin()">Salir</button>
       </div>
     </div>
@@ -742,6 +743,7 @@
       <h1>Auspicios</h1>
       <div class="admin-links">
         <button type="button" class="ghost-btn" onclick="go('admin')">← Talleres</button>
+        <button type="button" class="ghost-btn" onclick="go('adminCategorias')">🏷️ Categorías</button>
         <button type="button" class="ghost-btn" onclick="logoutAdmin()">Salir</button>
       </div>
     </div>
@@ -749,6 +751,27 @@
       <button class="submit-btn" style="width:auto;padding:12px 22px;" onclick="openSponsorModal()">+ Nuevo auspicio</button>
     </div>
     <div id="sponsorAdminList"></div>
+  </div>
+</div>
+
+<!-- ======================= ADMIN CATEGORÍAS ======================= -->
+<div class="view" id="view-adminCategorias">
+  <div class="admin-wrap">
+    <div class="admin-topbar">
+      <h1>Categorías</h1>
+      <div class="admin-links">
+        <button type="button" class="ghost-btn" onclick="go('admin')">← Talleres</button>
+        <button type="button" class="ghost-btn" onclick="logoutAdmin()">Salir</button>
+      </div>
+    </div>
+    <p style="color:var(--gray);font-size:13.5px;margin:10px 0 20px;">
+      Estas son las categorías que aparecen en el buscador y en los formularios de postulación. Podés agregar nuevas o quitar las que ya no uses.
+    </p>
+    <div style="display:flex;gap:10px;margin-bottom:22px;max-width:420px;">
+      <input type="text" id="nuevaCategoriaInput" placeholder="Nombre de la nueva categoría" style="flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:14.5px;" onkeydown="if(event.key==='Enter')agregarCategoria()">
+      <button class="submit-btn" style="width:auto;padding:0 20px;" onclick="agregarCategoria()">+ Agregar</button>
+    </div>
+    <div id="categoriasAdminList"></div>
   </div>
 </div>
 
@@ -812,7 +835,16 @@
 /* ============================================================
    DATA
 ============================================================ */
-const CATEGORIES = ["Mecánica General","Electricidad Automotriz","Carrocería y Pintura","Frenos","Suspensión y Dirección","Alineación y Balanceo","Diagnóstico Computarizado","Inyección Electrónica","Gomería","Lavadero","Grúa","Repuestos","Accesorios","Estación de Servicio","Servicios Múltiples","Otros"];
+let CATEGORIES = [];
+async function fetchCategorias(){
+  try{
+    const rows = await apiGet('/api/categorias');
+    CATEGORIES = rows.map(c=>c.nombre);
+  }catch(e){
+    console.error(e);
+    CATEGORIES = ["Mecánica General","Otros"]; // respaldo mínimo si la API falla
+  }
+}
 
 /* ============================================================
    API — capa de datos real (Neon vía funciones serverless)
@@ -881,7 +913,7 @@ async function go(view){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector('nav.mainnav').classList.remove('open');
 
-  if(view==='admin' || view==='adminAuspicios'){
+  if(view==='admin' || view==='adminAuspicios' || view==='adminCategorias'){
     if(!isAdmin){
       isAdmin = await checkAdminSession();
     }
@@ -901,6 +933,7 @@ async function go(view){
   }
   else if(view==='admin'){ document.getElementById('view-admin').classList.add('active'); document.getElementById('nav-admin').classList.add('active'); renderAdmin(); }
   else if(view==='adminAuspicios'){ document.getElementById('view-adminAuspicios').classList.add('active'); document.getElementById('nav-admin').classList.add('active'); renderSponsorAdmin(); }
+  else if(view==='adminCategorias'){ document.getElementById('view-adminCategorias').classList.add('active'); document.getElementById('nav-admin').classList.add('active'); renderCategoriasAdmin(); }
 
   window.scrollTo(0,0);
 }
@@ -917,11 +950,13 @@ async function checkAdminSession(){
 ============================================================ */
 function initSelects(){
   const catFilter = document.getElementById('categoryFilter');
+  catFilter.innerHTML = '<option value="Todas">Todas</option>';
   CATEGORIES.forEach(c=>{
     const o = document.createElement('option'); o.value=c; o.textContent=c;
     catFilter.appendChild(o);
   });
   const fCat = document.getElementById('f-categoria');
+  fCat.innerHTML = '';
   CATEGORIES.forEach(c=>{
     const o = document.createElement('option'); o.value=c; o.textContent=c;
     fCat.appendChild(o);
@@ -1016,7 +1051,7 @@ function tallerCard(t, destacadoStyle){
   const waNumber = (t.whatsapp||'').replace(/[^0-9]/g,'');
   const waLink = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent('Hola, te contacto desde TallerYa 👋')}` : '#';
   const bannerInner = t.imagen
-    ? `<img src="${escapeAttr(t.imagen)}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
+    ? `<img src="${escapeAttr(t.imagen)}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:100%;object-fit:contain;position:absolute;inset:0;">`
     : ICON_WRENCH;
 
   const mapsUrl = t.ubicacion
@@ -1575,7 +1610,7 @@ function openTallerDetail(id){
 
   document.getElementById('modalTitle').textContent = t.nombre;
   document.getElementById('modalBody').innerHTML = `
-    ${t.imagen ? `<img src="${escapeAttr(t.imagen)}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:180px;object-fit:cover;border-radius:12px;margin-bottom:16px;display:block;">` : ''}
+    ${t.imagen ? `<img src="${escapeAttr(t.imagen)}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:180px;object-fit:contain;background:var(--bg);border-radius:12px;margin-bottom:16px;display:block;">` : ''}
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center;">
       <span class="cat-pill">${escapeHtml(t.categoria)}</span>
       ${t.destacado ? `<span class="cat-pill" style="background:#FFF4E5;color:var(--orange-dark);">${ICON_STAR} Destacado</span>` : ''}
@@ -1754,6 +1789,57 @@ function closeModal(){
 /* ============================================================
    ADMIN — AUSPICIOS
 ============================================================ */
+/* ============================================================
+   ADMIN — CATEGORÍAS
+============================================================ */
+let categoriasConId = [];
+async function renderCategoriasAdmin(){
+  const wrap = document.getElementById('categoriasAdminList');
+  try{
+    categoriasConId = await apiGet('/api/categorias');
+  }catch(e){
+    wrap.innerHTML = `<div class="empty">${ICON_INBOX}<div>No se pudieron cargar las categorías.</div></div>`;
+    return;
+  }
+  if(categoriasConId.length===0){
+    wrap.innerHTML = `<div class="empty">${ICON_INBOX}<div>Todavía no hay categorías cargadas.</div></div>`;
+    return;
+  }
+  wrap.innerHTML = categoriasConId.map(c=>`
+    <div class="admin-row">
+      <div class="info"><h4>${escapeHtml(c.nombre)}</h4></div>
+      <div class="admin-actions">
+        <button class="abtn delete" onclick="eliminarCategoria(${c.id}, '${escapeAttr(c.nombre).replace(/'/g,"\\'")}')">${ICON_TRASH} Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+}
+async function agregarCategoria(){
+  const input = document.getElementById('nuevaCategoriaInput');
+  const nombre = input.value.trim();
+  if(!nombre) return;
+  try{
+    await apiSend('/api/categorias', 'POST', { nombre });
+    input.value = '';
+    await fetchCategorias();
+    initSelects();
+    renderCategoriasAdmin();
+  }catch(err){
+    alert('No se pudo agregar: ' + err.message);
+  }
+}
+async function eliminarCategoria(id, nombre){
+  if(!confirm(`¿Eliminar la categoría "${nombre}"? Los talleres que ya la tengan cargada no se van a modificar, pero dejará de aparecer como opción.`)) return;
+  try{
+    await apiSend('/api/categorias/'+id, 'DELETE');
+    await fetchCategorias();
+    initSelects();
+    renderCategoriasAdmin();
+  }catch(err){
+    alert('No se pudo eliminar: ' + err.message);
+  }
+}
+
 async function renderSponsorAdmin(){
   try{ await fetchAuspiciosList(); }catch(e){ console.error(e); }
   const wrap = document.getElementById('sponsorAdminList');
@@ -1924,10 +2010,13 @@ window.addEventListener('appinstalled', ()=>{
   dismissInstallBanner();
 });
 
-initSelects();
-document.getElementById('f-destacado-wrap').innerHTML = destacadoBoxHTML('f', { mostrarAuspicio: true });
-setupImageUpload('f', '');
-go('home');
+(async function start(){
+  await fetchCategorias();
+  initSelects();
+  document.getElementById('f-destacado-wrap').innerHTML = destacadoBoxHTML('f', { mostrarAuspicio: true });
+  setupImageUpload('f', '');
+  go('home');
+})();
 </script>
 </body>
 </html>
