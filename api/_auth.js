@@ -12,8 +12,9 @@ export function makeToken() {
 }
 
 export function checkCredentials(user, pin) {
-  if (!process.env.ADMIN_USER || !process.env.ADMIN_PIN) return false;
-  return user === process.env.ADMIN_USER && pin === process.env.ADMIN_PIN;
+  if (!process.env.ADMIN_USER || !process.env.ADMIN_PIN) return { ok: false, reason: 'no-config' };
+  const ok = user === process.env.ADMIN_USER && pin === process.env.ADMIN_PIN;
+  return { ok, reason: ok ? null : 'mismatch' };
 }
 
 function parseCookies(header) {

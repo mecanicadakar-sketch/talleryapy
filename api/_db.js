@@ -17,65 +17,91 @@ export async function ensureSchema() {
   if (schemaReady) return;
   const sql = getSql();
 
-  await sql`
-    CREATE TABLE IF NOT EXISTS talleres (
-      id TEXT PRIMARY KEY,
-      nombre TEXT NOT NULL,
-      categoria TEXT DEFAULT '',
-      ciudad TEXT DEFAULT '',
-      direccion TEXT DEFAULT '',
-      horario TEXT DEFAULT '',
-      descripcion TEXT DEFAULT '',
-      servicios JSONB DEFAULT '[]',
-      telefono TEXT DEFAULT '',
-      whatsapp TEXT DEFAULT '',
-      email TEXT DEFAULT '',
-      imagen TEXT DEFAULT '',
-      lat DOUBLE PRECISION,
-      lng DOUBLE PRECISION,
-      estado TEXT DEFAULT 'pendiente',
-      destacado BOOLEAN DEFAULT false,
-      created_at TIMESTAMPTZ DEFAULT now()
-    )
-  `;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS auspicios (
-      id TEXT PRIMARY KEY,
-      nombre TEXT NOT NULL,
-      categoria TEXT DEFAULT '',
-      horario TEXT DEFAULT '',
-      descripcion TEXT DEFAULT '',
-      servicios JSONB DEFAULT '[]',
-      direccion TEXT DEFAULT '',
-      ciudad TEXT DEFAULT '',
-      telefono TEXT DEFAULT '',
-      whatsapp TEXT DEFAULT '',
-      email TEXT DEFAULT '',
-      imagen TEXT DEFAULT '',
-      link TEXT DEFAULT '',
-      lat DOUBLE PRECISION,
-      lng DOUBLE PRECISION,
-      destacado BOOLEAN DEFAULT false,
-      created_at TIMESTAMPTZ DEFAULT now()
-    )
-  `;
-
-  await sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS destacado_solicitado BOOLEAN DEFAULT false`;
-  await sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS auspicio_solicitado BOOLEAN DEFAULT false`;
-  await sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS telefono_pago TEXT DEFAULT ''`;
-  await sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS folio SERIAL`;
-  await sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS destacado_solicitado BOOLEAN DEFAULT false`;
-  await sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS telefono_pago TEXT DEFAULT ''`;
-  await sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS folio SERIAL`;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS categorias (
-      id SERIAL PRIMARY KEY,
-      nombre TEXT UNIQUE NOT NULL,
-      orden INT DEFAULT 0
-    )
-  `;
+  try {
+    // Todas las creaciones/alteraciones de tablas van en UNA sola transacción
+    // (un solo viaje de red) para evitar quedarnos sin tiempo si Neon tiene
+    // que "despertar" la base de datos (plan gratuito con auto-suspend).
+    await sql.transaction([
+      sql`
+        CREATE TABLE IF NOT EXISTS talleres (
+          id TEXT PRIMARY KEY,
+          nombre TEXT NOT NULL,
+          categoria TEXT DEFAULT '',
+          ciudad TEXT DEFAULT '',
+          direccion TEXT DEFAULT '',
+          horario TEXT DEFAULT '',
+          descripcion TEXT DEFAULT '',
+          servicios JSONB DEFAULT '[]',
+          telefono TEXT DEFAULT '',
+          whatsapp TEXT DEFAULT '',
+          email TEXT DEFAULT '',
+          imagen TEXT DEFAULT '',
+          lat DOUBLE PRECISION,
+          lng DOUBLE PRECISION,
+          estado TEXT DEFAULT 'pendiente',
+          destacado BOOLEAN DEFAULT false,
+          created_at TIMESTAMPTZ DEFAULT now()
+        )
+      `,
+      sql`
+        CREATE TABLE IF NOT EXISTS auspicios (
+          id TEXT PRIMARY KEY,
+          nombre TEXT NOT NULL,
+          categoria TEXT DEFAULT '',
+          horario TEXT DEFAULT '',
+          descripcion TEXT DEFAULT '',
+          servicios JSONB DEFAULT '[]',
+          direccion TEXT DEFAULT '',
+          ciudad TEXT DEFAULT '',
+          telefono TEXT DEFAULT '',
+          whatsapp TEXT DEFAULT '',
+          email TEXT DEFAULT '',
+          imagen TEXT DEFAULT '',
+          link TEXT DEFAULT '',
+          lat DOUBLE PRECISION,
+          lng DOUBLE PRECISION,
+          destacado BOOLEAN DEFAULT false,
+          created_at TIMESTAMPTZ DEFAULT now()
+        )
+      `,
+      sql`
+        CREATE TABLE IF NOT EXISTS categorias (
+          id SERIAL PRIMARY KEY,
+          nombre TEXT UNIQUE NOT NULL,
+          orden INT DEFAULT 0
+        )
+      `,
+      sql`
+        CREATE TABLE IF NOT EXISTS productos (
+          id TEXT PRIMARY KEY,
+          nombre TEXT NOT NULL,
+          descripcion TEXT DEFAULT '',
+          precio TEXT DEFAULT '',
+          categoria TEXT DEFAULT '',
+          imagen TEXT DEFAULT '',
+          contacto TEXT DEFAULT '',
+          whatsapp TEXT DEFAULT '',
+          estado TEXT DEFAULT 'pendiente',
+          destacado BOOLEAN DEFAULT false,
+          folio SERIAL,
+          created_at TIMESTAMPTZ DEFAULT now()
+        )
+      `,
+      sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS destacado_solicitado BOOLEAN DEFAULT false`,
+      sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS auspicio_solicitado BOOLEAN DEFAULT false`,
+      sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS telefono_pago TEXT DEFAULT ''`,
+      sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS folio SERIAL`,
+      sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS destacado_solicitado BOOLEAN DEFAULT false`,
+      sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS telefono_pago TEXT DEFAULT ''`,
+      sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS folio SERIAL`,
+      sql`ALTER TABLE productos ADD COLUMN IF NOT EXISTS destacado_solicitado BOOLEAN DEFAULT false`,
+      sql`ALTER TABLE productos ADD COLUMN IF NOT EXISTS telefono_pago TEXT DEFAULT ''`,
+      sql`ALTER TABLE productos ADD COLUMN IF NOT EXISTS imagenes JSONB DEFAULT '[]'`
+    ]);
+  } catch (e) {
+    console.error('Error preparando la base de datos (migraciones):', e);
+    throw e;
+  }
 
   const countRows = await sql`SELECT COUNT(*)::int AS count FROM talleres`;
   if (countRows[0].count === 0) {

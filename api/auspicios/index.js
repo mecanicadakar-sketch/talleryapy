@@ -27,8 +27,14 @@ function rowToAuspicio(r) {
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  await ensureSchema();
-  const sql = getSql();
+  let sql;
+  try {
+    await ensureSchema();
+    sql = getSql();
+  } catch (e) {
+    res.status(500).json({ error: 'Error de base de datos: ' + e.message });
+    return;
+  }
 
   if (req.method === 'GET') {
     const rows = await sql`SELECT * FROM auspicios ORDER BY created_at DESC`;
