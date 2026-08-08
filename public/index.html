@@ -281,6 +281,21 @@
   .field textarea{resize:vertical;min-height:90px;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   @media (max-width:560px){.row2{grid-template-columns:1fr;}}
+  .mimg-row{display:flex;gap:10px;}
+  .mimg-slot{
+    width:88px;height:88px;border-radius:12px;flex-shrink:0;position:relative;
+    border:1.5px dashed var(--line);background:var(--bg);cursor:pointer;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;transition:.15s;
+  }
+  .mimg-slot:hover{border-color:var(--blue);}
+  .mimg-plus{font-size:26px;color:var(--gray);font-weight:300;}
+  .mimg-thumb{width:100%;height:100%;object-fit:cover;display:block;}
+  .mimg-remove{
+    position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;
+    background:rgba(16,27,51,.7);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;
+  }
+  .mimg-remove:hover{background:#E4402C;}
+
   .upload-zone{
     border:1.5px dashed var(--line);border-radius:12px;padding:32px;text-align:center;
     color:var(--gray);cursor:pointer;transition:.15s;background:var(--bg);
@@ -358,7 +373,36 @@
     margin-bottom:12px;gap:14px;flex-wrap:wrap;
   }
   .admin-row .info h4{margin:0 0 4px;font-size:15.5px;display:flex;align-items:center;gap:8px;}
+  .cat-pill{background:var(--bg);color:var(--gray);font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;display:inline-flex;align-items:center;}
   .admin-row .info .cat-pill{background:var(--bg);color:var(--gray);font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;}
+  .verified-badge{
+    display:inline-flex;align-items:center;gap:3px;
+    background:#ECFDF3;color:#067647;font-size:11px;font-weight:700;
+    padding:3px 9px;border-radius:999px;vertical-align:middle;
+  }
+  .verified-badge svg{width:10px;height:10px;}
+
+  .join-hero{
+    background:linear-gradient(135deg,var(--navy),#1B2C55);color:#fff;
+    border-radius:20px;padding:32px 28px;margin-bottom:36px;position:relative;overflow:hidden;
+  }
+  .join-hero::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg, rgba(255,255,255,.04) 0 2px, transparent 2px 24px);pointer-events:none;}
+  .join-tag{
+    position:relative;z-index:1;display:inline-block;background:rgba(245,146,59,.18);
+    color:#FDC58F;font-size:12.5px;font-weight:700;padding:5px 13px;border-radius:999px;margin-bottom:14px;
+  }
+  .join-hero h1{position:relative;z-index:1;font-size:28px;margin:0 0 10px;color:#fff;}
+  .join-hero p{position:relative;z-index:1;color:#C9D2E6;font-size:14.5px;line-height:1.55;margin:0 0 26px;max-width:560px;}
+  .join-benefits{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:640px){ .join-benefits{grid-template-columns:1fr;} }
+  .join-benefit{display:flex;gap:10px;align-items:flex-start;}
+  .join-check{
+    flex-shrink:0;width:22px;height:22px;border-radius:50%;background:rgba(34,197,94,.2);
+    color:#6EE7A8;display:flex;align-items:center;justify-content:center;margin-top:1px;
+  }
+  .join-check svg{width:12px;height:12px;}
+  .join-benefit b{display:block;font-size:14px;color:#fff;margin-bottom:2px;}
+  .join-benefit span{display:block;font-size:12.5px;color:#AEB9D1;line-height:1.4;}
   .admin-row .info .meta{font-size:13px;color:var(--gray);display:flex;gap:6px;align-items:center;margin-top:3px;}
   .admin-row .meta svg{width:13px;height:13px;}
   .admin-actions{display:flex;gap:8px;flex-wrap:wrap;}
@@ -392,6 +436,21 @@
   }
 
   /* ---------- Install app banner ---------- */
+  /* ---------- Asistente mecánico (IA) ---------- */
+  .asistente-fab{
+    position:fixed;right:20px;bottom:20px;z-index:190;
+    width:58px;height:58px;border-radius:50%;
+    background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 12px 26px -8px rgba(23,73,184,.55);transition:.15s;
+  }
+  .asistente-fab svg{width:26px;height:26px;}
+  .asistente-fab:hover{transform:translateY(-2px) scale(1.04);}
+  .chat-bubble{max-width:85%;padding:11px 14px;border-radius:14px;font-size:14px;line-height:1.5;white-space:pre-wrap;}
+  .chat-bubble.user{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:4px;}
+  .chat-bubble.bot{align-self:flex-start;background:var(--bg);color:var(--ink);border-bottom-left-radius:4px;}
+  .chat-bubble.loading{align-self:flex-start;background:var(--bg);color:var(--gray);font-style:italic;}
+
   .install-banner{
     position:fixed;left:16px;right:16px;bottom:16px;z-index:200;
     display:none;
@@ -506,6 +565,7 @@
     <nav class="mainnav" id="mainnav">
       <button type="button" class="nav-btn primary" id="nav-home" onclick="go('home')">Buscar talleres</button>
       <button type="button" class="nav-btn" id="nav-postular" onclick="go('postular')">Postular mi taller</button>
+      <button type="button" class="nav-btn" id="nav-productos" onclick="go('productos')">Ventas y Ofertas</button>
       <button type="button" class="nav-btn" id="nav-admin" onclick="go('admin')">Administrador</button>
     </nav>
   </div>
@@ -611,9 +671,32 @@
 <!-- ======================= POSTULAR ======================= -->
 <div class="view" id="view-postular">
   <div class="page-wrap">
+    <div class="join-hero">
+      <span class="join-tag">🎉 Gratis para empezar</span>
+      <h1>Sumate a TallerYa</h1>
+      <p>Miles de personas buscan un taller de confianza cerca suyo. Que te encuentren a vos es gratis — vos decidís después si querés destacarte.</p>
+      <div class="join-benefits">
+        <div class="join-benefit">
+          <span class="join-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <div><b>Aparecés cuando te buscan cerca</b><span>Filtro por zona, servicio y categoría — sin costo por aparecer listado.</span></div>
+        </div>
+        <div class="join-benefit">
+          <span class="join-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <div><b>Contacto directo por WhatsApp</b><span>El cliente te escribe directo a vos. Sin intermediarios, sin comisión por venta.</span></div>
+        </div>
+        <div class="join-benefit">
+          <span class="join-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <div><b>Insignia de Verificado</b><span>Un administrador confirma tus datos, lo que genera más confianza en los clientes.</span></div>
+        </div>
+        <div class="join-benefit">
+          <span class="join-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <div><b>Sumá tu ubicación al mapa</b><span>Aparecé también en "Buscar ayuda cerca mío", para quien te necesite con urgencia.</span></div>
+        </div>
+      </div>
+    </div>
     <div class="page-head">
-      <h1>Postulá tu taller</h1>
-      <p>Completá los datos. Un administrador verificará la información antes de publicarlo en TallerYa.</p>
+      <h2 style="font-size:22px;margin:0 0 8px;color:var(--ink);">Completá tus datos</h2>
+      <p>Un administrador verificará la información antes de publicarlo en TallerYa.</p>
     </div>
     <div class="banner-ok" id="postularOk">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
@@ -701,6 +784,56 @@
   </div>
 </div>
 
+<!-- ======================= REPUESTOS Y ACCESORIOS ======================= -->
+<div class="view" id="view-productos">
+  <div class="page-wrap" style="max-width:1180px;">
+    <div class="block-head">
+      <div>
+        <h1 style="font-size:28px;margin:0 0 8px;">Ventas y Ofertas</h1>
+        <p style="color:var(--gray);font-size:14.5px;">Venta de Repuestos, Accesorios, Autos, Cubiertas, etc.</p>
+      </div>
+      <button class="submit-btn" style="width:auto;padding:12px 22px;white-space:nowrap;" onclick="abrirFormProducto()">Vender/Ofertar</button>
+    </div>
+    <div class="grid" id="productosGrid" style="margin-top:26px;"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="productoFormBg">
+  <div class="modal">
+    <button class="close-x" onclick="cerrarFormProducto()">&times;</button>
+    <h3>Ofrecer un repuesto o accesorio</h3>
+    <p style="color:var(--gray);font-size:13px;margin:-6px 0 16px;">Un administrador revisa la publicación antes de mostrarla.</p>
+    <div class="banner-ok" id="productoOk">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+      ¡Listo! Tu publicación fue enviada y está pendiente de aprobación.
+    </div>
+    <form id="productoForm" onsubmit="submitProducto(event)">
+      <div class="field"><label>Nombre del producto *</label><input id="p-nombre" required placeholder="Ej: Pastillas de freno delanteras"></div>
+      <div class="row2">
+        <div class="field"><label>Precio</label><input id="p-precio" placeholder="Gs. 150.000 o 'Consultar'"></div>
+        <div class="field"><label>Categoría</label>
+          <select id="p-categoria">
+            <option value="Repuestos">Repuestos</option>
+            <option value="Accesorios">Accesorios</option>
+            <option value="Autos">Autos</option>
+            <option value="Herramientas">Herramientas</option>
+            <option value="Lubricantes">Lubricantes</option>
+            <option value="Otros">Otros</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Descripción</label><textarea id="p-descripcion" placeholder="Marca, modelo compatible, estado (nuevo/usado), etc."></textarea></div>
+      <div class="row2">
+        <div class="field"><label>Teléfono</label><input id="p-contacto" placeholder="0975 123 456"></div>
+        <div class="field"><label>WhatsApp * <span class="hint">(con código de país)</span></label><input id="p-whatsapp" required placeholder="59598..."></div>
+      </div>
+      <div id="p-destacado-wrap"></div>
+      <div id="p-imagen-wrap"></div>
+      <button type="submit" class="submit-btn">Publicar</button>
+    </form>
+  </div>
+</div>
+
 <!-- ======================= ADMIN LOGIN ======================= -->
 <div class="view" id="view-adminlogin">
   <div class="admin-login">
@@ -723,6 +856,7 @@
       <h1>Gestión de talleres</h1>
       <div class="admin-links">
         <button type="button" class="ghost-btn" onclick="go('adminAuspicios')">📣 Auspicios</button>
+        <button type="button" class="ghost-btn" onclick="go('adminProductos')">🔧 Ventas y Ofertas</button>
         <button type="button" class="ghost-btn" onclick="go('adminCategorias')">🏷️ Categorías</button>
         <button type="button" class="ghost-btn" onclick="logoutAdmin()">Salir</button>
       </div>
@@ -743,6 +877,7 @@
       <h1>Auspicios</h1>
       <div class="admin-links">
         <button type="button" class="ghost-btn" onclick="go('admin')">← Talleres</button>
+        <button type="button" class="ghost-btn" onclick="go('adminProductos')">🔧 Ventas y Ofertas</button>
         <button type="button" class="ghost-btn" onclick="go('adminCategorias')">🏷️ Categorías</button>
         <button type="button" class="ghost-btn" onclick="logoutAdmin()">Salir</button>
       </div>
@@ -754,6 +889,26 @@
   </div>
 </div>
 
+<!-- ======================= ADMIN REPUESTOS ======================= -->
+<div class="view" id="view-adminProductos">
+  <div class="admin-wrap">
+    <div class="admin-topbar">
+      <h1>Ventas y Ofertas</h1>
+      <div class="admin-links">
+        <button type="button" class="ghost-btn" onclick="go('admin')">← Talleres</button>
+        <button type="button" class="ghost-btn" onclick="go('adminAuspicios')">📣 Auspicios</button>
+        <button type="button" class="ghost-btn" onclick="logoutAdmin()">Salir</button>
+      </div>
+    </div>
+    <div class="tabs" id="adminProductosTabs">
+      <div class="tab active" data-tab="pendiente" onclick="setAdminProductosTab('pendiente')">Pendientes (<span id="count-p-pendiente">0</span>)</div>
+      <div class="tab" data-tab="aprobado" onclick="setAdminProductosTab('aprobado')">Aprobados (<span id="count-p-aprobado">0</span>)</div>
+      <div class="tab" data-tab="rechazado" onclick="setAdminProductosTab('rechazado')">Rechazados (<span id="count-p-rechazado">0</span>)</div>
+    </div>
+    <div id="adminProductosList"></div>
+  </div>
+</div>
+
 <!-- ======================= ADMIN CATEGORÍAS ======================= -->
 <div class="view" id="view-adminCategorias">
   <div class="admin-wrap">
@@ -761,6 +916,7 @@
       <h1>Categorías</h1>
       <div class="admin-links">
         <button type="button" class="ghost-btn" onclick="go('admin')">← Talleres</button>
+        <button type="button" class="ghost-btn" onclick="go('adminProductos')">🔧 Ventas y Ofertas</button>
         <button type="button" class="ghost-btn" onclick="logoutAdmin()">Salir</button>
       </div>
     </div>
@@ -798,6 +954,24 @@
     <button class="close-x" onclick="closeSOS()">&times;</button>
     <h3>🚨 Ayuda cerca tuyo</h3>
     <div id="sosModalBody"></div>
+  </div>
+</div>
+
+<button type="button" class="asistente-fab" onclick="abrirAsistente()" aria-label="Asistente mecánico">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+</button>
+
+<div class="modal-bg" id="asistenteModalBg">
+  <div class="modal modal-wide" style="display:flex;flex-direction:column;max-height:80vh;">
+    <button class="close-x" onclick="cerrarAsistente()">&times;</button>
+    <h3>🤖 Asistente Mecánico</h3>
+    <p style="color:var(--gray);font-size:12.5px;margin:-8px 0 14px;">Te doy una orientación general, no reemplaza a un mecánico. Si algo suena peligroso, siempre te voy a decir que pares y contactes un taller.</p>
+    <div id="asistenteChips" class="sos-chips" style="margin-bottom:14px;"></div>
+    <div id="asistenteMensajes" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:4px 2px;min-height:180px;"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <input type="text" id="asistenteInput" placeholder="Contame qué le pasa a tu auto..." style="flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:14.5px;" onkeydown="if(event.key==='Enter')enviarAsistente()">
+      <button type="button" class="submit-btn" style="width:auto;padding:0 20px;" onclick="enviarAsistente()">Enviar</button>
+    </div>
   </div>
 </div>
 
@@ -870,9 +1044,12 @@ async function apiSend(url, method, body){
 
 async function fetchTalleres(){ talleres = await apiGet('/api/talleres'); }
 async function fetchAuspiciosList(){ auspicios = await apiGet('/api/auspicios'); }
+async function fetchProductosList(){ productos = await apiGet('/api/productos'); }
 
 let talleres = [];
 let auspicios = [];
+let productos = [];
+let adminProductosTab = 'pendiente';
 let adminTab = 'pendiente';
 let isAdmin = false;
 
@@ -913,7 +1090,7 @@ async function go(view){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector('nav.mainnav').classList.remove('open');
 
-  if(view==='admin' || view==='adminAuspicios' || view==='adminCategorias'){
+  if(view==='admin' || view==='adminAuspicios' || view==='adminCategorias' || view==='adminProductos'){
     if(!isAdmin){
       isAdmin = await checkAdminSession();
     }
@@ -931,9 +1108,11 @@ async function go(view){
     if(!activeMaps['f']) initPinMap('f', null);
     else setTimeout(()=> activeMaps['f'].map.invalidateSize(), 60);
   }
+  else if(view==='productos'){ document.getElementById('view-productos').classList.add('active'); document.getElementById('nav-productos').classList.add('active'); renderProductosPublico(); }
   else if(view==='admin'){ document.getElementById('view-admin').classList.add('active'); document.getElementById('nav-admin').classList.add('active'); renderAdmin(); }
   else if(view==='adminAuspicios'){ document.getElementById('view-adminAuspicios').classList.add('active'); document.getElementById('nav-admin').classList.add('active'); renderSponsorAdmin(); }
   else if(view==='adminCategorias'){ document.getElementById('view-adminCategorias').classList.add('active'); document.getElementById('nav-admin').classList.add('active'); renderCategoriasAdmin(); }
+  else if(view==='adminProductos'){ document.getElementById('view-adminProductos').classList.add('active'); document.getElementById('nav-admin').classList.add('active'); renderProductosAdmin(); }
 
   window.scrollTo(0,0);
 }
@@ -1069,7 +1248,7 @@ function tallerCard(t, destacadoStyle){
       <span class="card-cat">${escapeHtml(t.categoria)}</span>
     </div>
     <div class="card-body">
-      <h3>${escapeHtml(t.nombre)}</h3>
+      <h3>${escapeHtml(t.nombre)} <span class="verified-badge" title="Datos verificados por TallerYa">${ICON_CHECK} Verificado</span></h3>
       <a class="row-icon" href="${mapsUrl}" target="_blank" rel="noopener" style="text-decoration:none;">${ICON_PIN}<span style="text-decoration:underline;">${escapeHtml(t.direccion || t.ciudad)}</span></a>
       ${t.horario ? `<div class="row-icon">${ICON_CLOCK}<span>${escapeHtml(t.horario)}</span> ${abiertoBadgeHTML(t.horario)}</div>` : ''}
       <div class="tags">${tagsHtml}</div>
@@ -1307,6 +1486,7 @@ async function tryLogin(){
     document.getElementById('adminPass').value='';
     go('admin');
   }catch(err){
+    document.getElementById('loginErr').textContent = err.message || 'Usuario o PIN incorrecto. Probá de nuevo.';
     document.getElementById('loginErr').style.display='block';
   }
 }
@@ -1361,6 +1541,88 @@ function toggleDestacadoPago(prefix){
   if(!box) return;
   const any = (d && d.checked) || (a && a.checked);
   box.style.display = any ? '' : 'none';
+}
+
+/* ============================================================
+   IMÁGENES MÚLTIPLES (hasta 3) — para publicaciones de Ventas y Ofertas
+============================================================ */
+let mimgActiveSlot = {};
+function multiImageUploadHTML(prefix, existingArr){
+  existingArr = Array.isArray(existingArr) ? existingArr.slice(0,3) : [];
+  let slots = '';
+  for(let i=0;i<3;i++){
+    const img = existingArr[i];
+    slots += `
+      <div class="mimg-slot" id="${prefix}-mimg-slot-${i}" onclick="mimgSlotClick('${prefix}',${i})">
+        ${img
+          ? `<img src="${escapeAttr(img)}" class="mimg-thumb"><button type="button" class="mimg-remove" onclick="event.stopPropagation();mimgRemove('${prefix}',${i})">✕</button>`
+          : `<div class="mimg-plus">+</div>`}
+      </div>`;
+  }
+  return `
+    <div class="field">
+      <label>Fotos <span class="hint">(hasta 3, opcional)</span></label>
+      <div class="mimg-row">${slots}</div>
+      <input type="file" accept="image/*" id="${prefix}-mimg-file" style="display:none;">
+      <input type="hidden" id="${prefix}-imagenes" value='${JSON.stringify(existingArr).replace(/'/g,"&#39;")}'>
+    </div>
+  `;
+}
+function mimgGetArr(prefix){
+  try{ return JSON.parse(document.getElementById(prefix+'-imagenes').value || '[]'); }catch(e){ return []; }
+}
+function mimgSetArr(prefix, arr){
+  document.getElementById(prefix+'-imagenes').value = JSON.stringify(arr);
+  for(let i=0;i<3;i++){
+    const slot = document.getElementById(prefix+'-mimg-slot-'+i);
+    if(!slot) continue;
+    const img = arr[i];
+    slot.innerHTML = img
+      ? `<img src="${img}" class="mimg-thumb"><button type="button" class="mimg-remove" onclick="event.stopPropagation();mimgRemove('${prefix}',${i})">✕</button>`
+      : `<div class="mimg-plus">+</div>`;
+  }
+}
+function mimgSlotClick(prefix, i){
+  const arr = mimgGetArr(prefix);
+  if(arr[i]) return; // ya hay foto en ese lugar, tocar la X para sacarla
+  mimgActiveSlot[prefix] = i;
+  document.getElementById(prefix+'-mimg-file').click();
+}
+function mimgRemove(prefix, i){
+  const arr = mimgGetArr(prefix);
+  arr.splice(i,1);
+  mimgSetArr(prefix, arr);
+}
+function setupMultiImageUpload(prefix, existingArr){
+  const fileInput = document.getElementById(prefix+'-mimg-file');
+  if(!fileInput) return;
+  mimgSetArr(prefix, Array.isArray(existingArr) ? existingArr.slice(0,3) : []);
+  fileInput.onchange = ()=>{
+    const file = fileInput.files[0];
+    fileInput.value = '';
+    if(!file || !file.type.startsWith('image/')) return;
+    const arrNow = mimgGetArr(prefix);
+    const slot = mimgActiveSlot[prefix] !== undefined ? mimgActiveSlot[prefix] : arrNow.length;
+    const reader = new FileReader();
+    reader.onload = (ev)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const maxW = 900;
+        const scale = Math.min(1, maxW / img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        const arr = mimgGetArr(prefix);
+        arr[slot] = dataUrl;
+        mimgSetArr(prefix, arr.slice(0,3));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
 }
 
 function imageUploadHTML(prefix, label, existing){
@@ -1613,6 +1875,7 @@ function openTallerDetail(id){
     ${t.imagen ? `<img src="${escapeAttr(t.imagen)}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:180px;object-fit:contain;background:var(--bg);border-radius:12px;margin-bottom:16px;display:block;">` : ''}
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center;">
       <span class="cat-pill">${escapeHtml(t.categoria)}</span>
+      <span class="verified-badge">${ICON_CHECK} Verificado</span>
       ${t.destacado ? `<span class="cat-pill" style="background:#FFF4E5;color:var(--orange-dark);">${ICON_STAR} Destacado</span>` : ''}
       ${abiertoBadgeHTML(t.horario)}
       <div style="margin-left:auto;display:flex;gap:8px;">
@@ -1736,6 +1999,63 @@ function renderSOSResults(){
   `;
 }
 
+/* ============================================================
+   ASISTENTE MECÁNICO (IA)
+============================================================ */
+let asistenteHistorial = [];
+const ASISTENTE_SUGERENCIAS = ['No arranca', 'Ruido raro', 'Se sobrecalienta', 'Luz de check engine', 'Frenos raros'];
+
+function abrirAsistente(){
+  document.getElementById('asistenteModalBg').classList.add('show');
+  if(asistenteHistorial.length===0){
+    renderAsistenteChips();
+    agregarBurbuja('bot', '¡Hola! Contame qué le está pasando a tu auto y te ayudo a entender qué revisar. 🔧');
+  }
+  setTimeout(()=> document.getElementById('asistenteInput').focus(), 100);
+}
+function cerrarAsistente(){
+  document.getElementById('asistenteModalBg').classList.remove('show');
+}
+function renderAsistenteChips(){
+  const wrap = document.getElementById('asistenteChips');
+  wrap.innerHTML = ASISTENTE_SUGERENCIAS.map(s=>
+    `<button type="button" class="sos-chip" onclick="usarSugerenciaAsistente('${s.replace(/'/g,"\\'")}')">${s}</button>`
+  ).join('');
+}
+function usarSugerenciaAsistente(texto){
+  document.getElementById('asistenteInput').value = texto;
+  enviarAsistente();
+}
+function agregarBurbuja(tipo, texto){
+  const cont = document.getElementById('asistenteMensajes');
+  const div = document.createElement('div');
+  div.className = 'chat-bubble ' + tipo;
+  div.textContent = texto;
+  cont.appendChild(div);
+  cont.scrollTop = cont.scrollHeight;
+  return div;
+}
+async function enviarAsistente(){
+  const input = document.getElementById('asistenteInput');
+  const mensaje = input.value.trim();
+  if(!mensaje) return;
+  input.value = '';
+  document.getElementById('asistenteChips').innerHTML = '';
+  agregarBurbuja('user', mensaje);
+  const loadingEl = agregarBurbuja('loading', 'Pensando...');
+
+  try{
+    const resp = await apiSend('/api/asistente', 'POST', { mensaje, historial: asistenteHistorial });
+    loadingEl.remove();
+    agregarBurbuja('bot', resp.respuesta);
+    asistenteHistorial.push({ role:'user', content: mensaje });
+    asistenteHistorial.push({ role:'assistant', content: resp.respuesta });
+  }catch(err){
+    loadingEl.remove();
+    agregarBurbuja('bot', 'No pude conectarme en este momento. Probá de nuevo en un ratito, o buscá un taller cercano con el botón "Buscar ayuda cerca mío".');
+  }
+}
+
 function closeSOS(){
   document.getElementById('sosModalBg').classList.remove('show');
 }
@@ -1793,6 +2113,194 @@ function closeModal(){
    ADMIN — CATEGORÍAS
 ============================================================ */
 let categoriasConId = [];
+/* ============================================================
+   REPUESTOS Y ACCESORIOS — vista pública
+============================================================ */
+function productoCard(p){
+  const waNumber = (p.whatsapp||'').replace(/[^0-9]/g,'');
+  const waLink = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent('Hola, vi tu publicación de "'+p.nombre+'" en TallerYa 👋')}` : '#';
+  const bannerInner = p.imagen
+    ? `<img src="${escapeAttr(p.imagen)}" alt="${escapeAttr(p.nombre)}" style="width:100%;height:100%;object-fit:contain;position:absolute;inset:0;">`
+    : ICON_WRENCH;
+  return `
+  <div class="card">
+    <div class="card-banner" style="background:${gradFor(p.id)}">
+      ${bannerInner}
+      ${p.destacado ? `<span class="badge-destacado">${ICON_STAR} Destacado</span>` : ''}
+      <span class="card-cat">${escapeHtml(p.categoria||'Repuestos')}</span>
+    </div>
+    <div class="card-body">
+      <h3>${escapeHtml(p.nombre)}</h3>
+      ${p.precio ? `<div class="pago-precio" style="font-size:18px;text-align:left;color:var(--blue);">${escapeHtml(p.precio)}</div>` : ''}
+      ${p.descripcion ? `<p style="color:var(--gray);font-size:13px;line-height:1.4;margin:4px 0 0;">${escapeHtml(p.descripcion)}</p>` : ''}
+      <div class="card-actions" style="margin-top:12px;">
+        <a class="wa-btn" href="${waLink}" target="_blank" rel="noopener">${ICON_WA} WhatsApp</a>
+        ${p.contacto ? `<a href="tel:${escapeAttr(p.contacto.replace(/[^0-9+]/g,''))}" class="icon-btn" aria-label="Llamar">${ICON_PHONE}</a>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+async function renderProductosPublico(){
+  const grid = document.getElementById('productosGrid');
+  try{
+    productos = await apiGet('/api/productos');
+  }catch(e){
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">${ICON_INBOX}<div>No se pudieron cargar las publicaciones.</div></div>`;
+    return;
+  }
+  if(productos.length===0){
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">${ICON_INBOX}<div>Todavía no hay repuestos ni accesorios publicados.<br>¡Sé el primero en ofrecer algo!</div></div>`;
+    return;
+  }
+  grid.innerHTML = productos.map(p=>productoCard(p)).join('');
+}
+
+function abrirFormProducto(){
+  document.getElementById('productoFormBg').classList.add('show');
+  if(!document.getElementById('p-imagen-wrap').innerHTML){
+    document.getElementById('p-imagen-wrap').innerHTML = multiImageUploadHTML('p', []);
+    setupMultiImageUpload('p', []);
+  }
+  if(!document.getElementById('p-destacado-wrap').innerHTML){
+    document.getElementById('p-destacado-wrap').innerHTML = destacadoBoxHTML('p', { mostrarAuspicio:false });
+  }
+}
+function cerrarFormProducto(){
+  document.getElementById('productoFormBg').classList.remove('show');
+}
+async function submitProducto(e){
+  e.preventDefault();
+  const nombre = document.getElementById('p-nombre').value.trim();
+  const whatsapp = document.getElementById('p-whatsapp').value.trim();
+  if(!nombre || !whatsapp) return;
+  const payload = {
+    nombre,
+    precio: document.getElementById('p-precio').value.trim(),
+    categoria: document.getElementById('p-categoria').value,
+    descripcion: document.getElementById('p-descripcion').value.trim(),
+    contacto: document.getElementById('p-contacto').value.trim(),
+    whatsapp,
+    imagenes: mimgGetArr('p'),
+    destacadoSolicitado: document.getElementById('p-destacado-check') ? document.getElementById('p-destacado-check').checked : false,
+    telefonoPago: document.getElementById('p-telefono-pago') ? document.getElementById('p-telefono-pago').value.trim() : ''
+  };
+  const btn = document.querySelector('#productoForm .submit-btn');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  try{
+    const resp = await apiSend('/api/productos', 'POST', payload);
+    document.getElementById('productoForm').reset();
+    mimgSetArr('p', []);
+    toggleDestacadoPago('p');
+    const ok = document.getElementById('productoOk');
+    ok.innerHTML = `${ICON_CHECK} ¡Listo! Tu publicación fue enviada y está pendiente de aprobación.${resp && resp.codigo ? ` Código: <b>${resp.codigo}</b>.` : ''}`;
+    ok.classList.add('show');
+    setTimeout(()=>{ ok.classList.remove('show'); cerrarFormProducto(); }, 3500);
+  }catch(err){
+    alert('No se pudo publicar: ' + err.message);
+  }finally{
+    btn.disabled = false; btn.textContent = 'Publicar';
+  }
+}
+
+/* ============================================================
+   REPUESTOS Y ACCESORIOS — panel de administrador
+============================================================ */
+function setAdminProductosTab(tab){
+  adminProductosTab = tab;
+  document.querySelectorAll('#adminProductosTabs .tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  renderProductosAdmin();
+}
+async function renderProductosAdmin(){
+  try{ productos = await apiGet('/api/productos'); }catch(e){ console.error(e); }
+  document.getElementById('count-p-pendiente').textContent = productos.filter(p=>p.estado==='pendiente').length;
+  document.getElementById('count-p-aprobado').textContent = productos.filter(p=>p.estado==='aprobado').length;
+  document.getElementById('count-p-rechazado').textContent = productos.filter(p=>p.estado==='rechazado').length;
+
+  const list = productos.filter(p=>p.estado===adminProductosTab);
+  const wrap = document.getElementById('adminProductosList');
+  if(list.length===0){
+    wrap.innerHTML = `<div class="empty">${ICON_INBOX}<div>No hay publicaciones en esta categoría.</div></div>`;
+    return;
+  }
+  wrap.innerHTML = list.map(p=>`
+    <div class="admin-row">
+      <div class="info">
+        <h4>${escapeHtml(p.nombre)} <span class="cat-pill">${escapeHtml(p.categoria||'Repuestos')}</span> ${p.destacadoSolicitado ? '<span class="cat-pill" style="background:#FFF4E5;color:var(--orange-dark);">⭐ Pidió destacado</span>' : ''}</h4>
+        ${p.codigo ? `<div class="meta" style="font-weight:700;color:var(--ink);">🧾 Código: ${escapeHtml(p.codigo)}</div>` : ''}
+        ${p.precio ? `<div class="meta">💲 ${escapeHtml(p.precio)}</div>` : ''}
+        <div class="meta">📞 ${escapeHtml(p.whatsapp||p.contacto||'—')}</div>
+        ${p.telefonoPago ? `<div class="meta" style="color:var(--orange-dark);font-weight:700;">☎️ Contacto para pago: ${escapeHtml(p.telefonoPago)}</div>` : ''}
+        ${p.creado ? `<div class="meta" style="color:var(--gray);">🗓️ Alta: ${formatFechaAlta(p.creado)}</div>` : ''}
+      </div>
+      <div class="admin-actions">
+        ${p.estado!=='aprobado' ? `<button class="abtn approve" onclick="setEstadoProducto('${p.id}','aprobado')">${ICON_CHECK} Aprobar</button>` : ''}
+        ${p.estado!=='rechazado' ? `<button class="abtn reject" onclick="setEstadoProducto('${p.id}','rechazado')">${ICON_X} Rechazar</button>` : ''}
+        <button class="abtn feature ${p.destacado?'on':''}" onclick="toggleDestacadoProducto('${p.id}')">${ICON_STAR} Destacado</button>
+        <button class="abtn edit" onclick="openEditProductoModal('${p.id}')">${ICON_EDIT} Editar</button>
+        <button class="abtn delete" onclick="deleteProducto('${p.id}')">${ICON_TRASH}</button>
+      </div>
+    </div>
+  `).join('');
+}
+async function setEstadoProducto(id, estado){
+  try{ await apiSend('/api/productos/'+id, 'PATCH', { estado }); renderProductosAdmin(); }
+  catch(err){ alert('No se pudo actualizar: ' + err.message); }
+}
+async function toggleDestacadoProducto(id){
+  const p = productos.find(x=>x.id===id);
+  if(!p) return;
+  try{ await apiSend('/api/productos/'+id, 'PATCH', { destacado: !p.destacado }); renderProductosAdmin(); }
+  catch(err){ alert('No se pudo actualizar: ' + err.message); }
+}
+async function deleteProducto(id){
+  if(!confirm('¿Eliminar esta publicación definitivamente?')) return;
+  try{ await apiSend('/api/productos/'+id, 'DELETE'); renderProductosAdmin(); }
+  catch(err){ alert('No se pudo eliminar: ' + err.message); }
+}
+function openEditProductoModal(id){
+  const p = productos.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('modalTitle').textContent = 'Editar publicación' + (p.codigo ? ' · ' + p.codigo : '');
+  document.getElementById('modalBody').innerHTML = `
+    <div class="field"><label>Nombre *</label><input id="ep-nombre" value="${escapeAttr(p.nombre)}"></div>
+    <div class="row2">
+      <div class="field"><label>Precio</label><input id="ep-precio" value="${escapeAttr(p.precio||'')}"></div>
+      <div class="field"><label>Categoría</label>
+        <select id="ep-categoria">
+          ${['Repuestos','Accesorios','Autos','Herramientas','Lubricantes','Otros'].map(c=>`<option value="${c}" ${c===p.categoria?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Descripción</label><textarea id="ep-descripcion">${escapeHtml(p.descripcion||'')}</textarea></div>
+    <div class="row2">
+      <div class="field"><label>Teléfono</label><input id="ep-contacto" value="${escapeAttr(p.contacto||'')}"></div>
+      <div class="field"><label>WhatsApp *</label><input id="ep-whatsapp" value="${escapeAttr(p.whatsapp||'')}"></div>
+    </div>
+    ${multiImageUploadHTML('ep', p.imagenes && p.imagenes.length ? p.imagenes : (p.imagen ? [p.imagen] : []))}
+    <button class="submit-btn" onclick="saveEditProducto('${p.id}')">Guardar cambios</button>
+  `;
+  document.getElementById('editModalBg').classList.add('show');
+  setupMultiImageUpload('ep', p.imagenes && p.imagenes.length ? p.imagenes : (p.imagen ? [p.imagen] : []));
+}
+async function saveEditProducto(id){
+  const payload = {
+    nombre: document.getElementById('ep-nombre').value.trim(),
+    precio: document.getElementById('ep-precio').value.trim(),
+    categoria: document.getElementById('ep-categoria').value,
+    descripcion: document.getElementById('ep-descripcion').value.trim(),
+    contacto: document.getElementById('ep-contacto').value.trim(),
+    whatsapp: document.getElementById('ep-whatsapp').value.trim(),
+    imagenes: mimgGetArr('ep')
+  };
+  try{
+    await apiSend('/api/productos/'+id, 'PATCH', payload);
+    closeModal();
+    renderProductosAdmin();
+  }catch(err){
+    alert('No se pudo guardar: ' + err.message);
+  }
+}
+
 async function renderCategoriasAdmin(){
   const wrap = document.getElementById('categoriasAdminList');
   try{
