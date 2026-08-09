@@ -2,6 +2,7 @@ import { getSql, ensureSchema } from '../_db.js';
 import { isAuthorized } from '../_auth.js';
 
 function rowToTaller(r) {
+  const imagenes = Array.isArray(r.imagenes) ? r.imagenes : [];
   return {
     id: r.id,
     nombre: r.nombre,
@@ -15,6 +16,7 @@ function rowToTaller(r) {
     whatsapp: r.whatsapp,
     email: r.email,
     imagen: r.imagen,
+    imagenes: imagenes.length ? imagenes : (r.imagen ? [r.imagen] : []),
     ubicacion: r.lat != null && r.lng != null ? { lat: r.lat, lng: r.lng } : null,
     estado: r.estado,
     destacado: r.destacado,
@@ -68,10 +70,13 @@ export default async function handler(req, res) {
     const servicios = JSON.stringify(b.servicios || []);
     const lat = b.ubicacion ? b.ubicacion.lat : null;
     const lng = b.ubicacion ? b.ubicacion.lng : null;
+    const imagenesArr = Array.isArray(b.imagenes) ? b.imagenes.filter(Boolean).slice(0, 3) : [];
+    const imagenesJson = JSON.stringify(imagenesArr);
+    const primeraImagen = imagenesArr[0] || b.imagen || '';
 
     const inserted = await sql`
-      INSERT INTO talleres (id, nombre, categoria, ciudad, direccion, horario, descripcion, servicios, telefono, whatsapp, email, imagen, lat, lng, estado, destacado, destacado_solicitado, auspicio_solicitado, telefono_pago)
-      VALUES (${id}, ${b.nombre}, ${b.categoria || ''}, ${b.ciudad}, ${b.direccion}, ${b.horario || ''}, ${b.descripcion || ''}, ${servicios}::jsonb, ${b.telefono || ''}, ${b.whatsapp}, ${b.email || ''}, ${b.imagen || ''}, ${lat}, ${lng}, 'pendiente', false, ${Boolean(b.destacadoSolicitado)}, ${Boolean(b.auspicioSolicitado)}, ${b.telefonoPago || ''})
+      INSERT INTO talleres (id, nombre, categoria, ciudad, direccion, horario, descripcion, servicios, telefono, whatsapp, email, imagen, imagenes, lat, lng, estado, destacado, destacado_solicitado, auspicio_solicitado, telefono_pago)
+      VALUES (${id}, ${b.nombre}, ${b.categoria || ''}, ${b.ciudad}, ${b.direccion}, ${b.horario || ''}, ${b.descripcion || ''}, ${servicios}::jsonb, ${b.telefono || ''}, ${b.whatsapp}, ${b.email || ''}, ${primeraImagen}, ${imagenesJson}::jsonb, ${lat}, ${lng}, 'pendiente', false, ${Boolean(b.destacadoSolicitado)}, ${Boolean(b.auspicioSolicitado)}, ${b.telefonoPago || ''})
       RETURNING folio
     `;
     const codigo = 'TY-T-' + String(inserted[0].folio).padStart(6, '0');

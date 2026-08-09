@@ -91,6 +91,7 @@ export async function ensureSchema() {
       sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS auspicio_solicitado BOOLEAN DEFAULT false`,
       sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS telefono_pago TEXT DEFAULT ''`,
       sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS folio SERIAL`,
+      sql`ALTER TABLE talleres ADD COLUMN IF NOT EXISTS imagenes JSONB DEFAULT '[]'`,
       sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS destacado_solicitado BOOLEAN DEFAULT false`,
       sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS telefono_pago TEXT DEFAULT ''`,
       sql`ALTER TABLE auspicios ADD COLUMN IF NOT EXISTS folio SERIAL`,
