@@ -751,24 +751,7 @@
           <input type="email" id="f-email" placeholder="contacto@taller.com">
         </div>
         <div class="field">
-          <label>Imagen del taller <span class="hint">(opcional)</span></label>
-          <div class="upload-zone" id="f-dropzone">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <b>Cargar imagen</b>
-            <span class="hint">Desde tu dispositivo, o arrastrala aquí</span>
-          </div>
-          <input type="file" accept="image/*" id="f-imagen-file" style="display:none;">
-          <div class="img-preview-wrap" id="f-imagen-previewwrap" style="display:none;">
-            <img class="img-preview" id="f-imagen-preview">
-            <div class="img-preview-actions">
-              <button type="button" class="img-remove-btn" onclick="clearImage('f')">✕ Quitar imagen</button>
-            </div>
-          </div>
-          <div class="img-link-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.07 0l2.83-2.83a5 5 0 00-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.07 0L4.1 13.83a5 5 0 007.07 7.07l1.49-1.49"/></svg>
-            <input type="text" id="f-imagen-linkbox" placeholder="o pegar enlace de imagen">
-          </div>
-          <input type="hidden" id="f-imagen">
+          <div id="f-imagen-wrap"></div>
         </div>
         <div class="field">
           <div id="f-destacado-wrap"></div>
@@ -1443,7 +1426,7 @@ async function submitPostular(e){
     telefono: document.getElementById('f-telefono').value.trim(),
     whatsapp,
     email: document.getElementById('f-email').value.trim(),
-    imagen: document.getElementById('f-imagen').value.trim(),
+    imagenes: mimgGetArr('f'),
     ubicacion: getPinCoords('f'),
     destacadoSolicitado: document.getElementById('f-destacado-check') ? document.getElementById('f-destacado-check').checked : false,
     auspicioSolicitado: document.getElementById('f-auspicio-check') ? document.getElementById('f-auspicio-check').checked : false,
@@ -1458,7 +1441,7 @@ async function submitPostular(e){
     document.getElementById('postularForm').reset();
     resetPinMap('f');
     toggleDestacadoPago('f');
-    clearImage('f');
+    mimgSetArr('f', []);
     const ok = document.getElementById('postularOk');
     ok.innerHTML = `${ICON_CHECK} ¡Listo! Tu taller fue enviado y está pendiente de aprobación.${resp && resp.codigo ? ` Tu código de referencia es <b>${resp.codigo}</b> — guardalo para consultas de pago o facturación.` : ''}`;
     ok.classList.add('show');
@@ -1565,8 +1548,10 @@ function multiImageUploadHTML(prefix, existingArr){
       <div class="mimg-row">${slots}</div>
       <input type="file" accept="image/*" id="${prefix}-mimg-file" style="display:none;">
       <input type="hidden" id="${prefix}-imagenes" value='${JSON.stringify(existingArr).replace(/'/g,"&#39;")}'>
-    </div>
-  `;
+      <p style="font-size:12px;color:var(--gray);margin:8px 0 0;line-height:1.4;">
+        Formatos: JPG, PNG, GIF o WEBP. Medida recomendada: horizontal, 1200×800 px aprox. (se ajusta y comprime automáticamente al subirla).
+      </p>
+    </div>`;
 }
 function mimgGetArr(prefix){
   try{ return JSON.parse(document.getElementById(prefix+'-imagenes').value || '[]'); }catch(e){ return []; }
@@ -1820,7 +1805,7 @@ function openEditModal(id){
       <div class="field"><label>WhatsApp * <span class="hint">(con código de país)</span></label><input id="e-whatsapp" value="${escapeAttr(t.whatsapp||'')}"></div>
     </div>
     <div class="field"><label>Email</label><input id="e-email" type="email" value="${escapeAttr(t.email||'')}"></div>
-    ${imageUploadHTML('e', 'Imagen del taller', t.imagen)}
+    ${multiImageUploadHTML('e', t.imagenes && t.imagenes.length ? t.imagenes : (t.imagen ? [t.imagen] : []))}
     <div id="e-destacado-wrap"></div>
     ${mapFieldHTML('e', t.ubicacion)}
     <button class="submit-btn" onclick="saveEdit('${t.id}')">Guardar cambios</button>
@@ -1832,7 +1817,7 @@ function openEditModal(id){
     auspicioChecked: Boolean(t.auspicioSolicitado),
     telefono: t.telefonoPago || ''
   });
-  setupImageUpload('e', t.imagen);
+  setupMultiImageUpload('e', t.imagenes && t.imagenes.length ? t.imagenes : (t.imagen ? [t.imagen] : []));
   initPinMap('e', t.ubicacion);
 }
 async function saveEdit(id){
@@ -1847,7 +1832,7 @@ async function saveEdit(id){
     telefono: document.getElementById('e-telefono').value.trim(),
     whatsapp: document.getElementById('e-whatsapp').value.trim(),
     email: document.getElementById('e-email').value.trim(),
-    imagen: document.getElementById('e-imagen').value.trim(),
+    imagenes: mimgGetArr('e'),
     ubicacion: getPinCoords('e'),
     destacadoSolicitado: document.getElementById('e-destacado-check') ? document.getElementById('e-destacado-check').checked : false,
     auspicioSolicitado: document.getElementById('e-auspicio-check') ? document.getElementById('e-auspicio-check').checked : false,
@@ -1870,9 +1855,20 @@ function openTallerDetail(id){
     ? `https://www.google.com/maps/search/?api=1&query=${t.ubicacion.lat},${t.ubicacion.lng}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((t.direccion||'') + ', ' + (t.ciudad||''))}`;
 
+  const fotos = (t.imagenes && t.imagenes.length ? t.imagenes : (t.imagen ? [t.imagen] : []));
+  let galeriaHTML = '';
+  if(fotos.length===1){
+    galeriaHTML = `<img src="${escapeAttr(fotos[0])}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:180px;object-fit:contain;background:var(--bg);border-radius:12px;margin-bottom:16px;display:block;">`;
+  }else if(fotos.length>1){
+    galeriaHTML = `
+      <div style="display:grid;grid-template-columns:repeat(${fotos.length},1fr);gap:8px;margin-bottom:16px;">
+        ${fotos.map(f=>`<img src="${escapeAttr(f)}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:130px;object-fit:cover;border-radius:10px;background:var(--bg);display:block;">`).join('')}
+      </div>`;
+  }
+
   document.getElementById('modalTitle').textContent = t.nombre;
   document.getElementById('modalBody').innerHTML = `
-    ${t.imagen ? `<img src="${escapeAttr(t.imagen)}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:180px;object-fit:contain;background:var(--bg);border-radius:12px;margin-bottom:16px;display:block;">` : ''}
+    ${galeriaHTML}
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center;">
       <span class="cat-pill">${escapeHtml(t.categoria)}</span>
       <span class="verified-badge">${ICON_CHECK} Verificado</span>
@@ -2136,9 +2132,41 @@ function productoCard(p){
       <div class="card-actions" style="margin-top:12px;">
         <a class="wa-btn" href="${waLink}" target="_blank" rel="noopener">${ICON_WA} WhatsApp</a>
         ${p.contacto ? `<a href="tel:${escapeAttr(p.contacto.replace(/[^0-9+]/g,''))}" class="icon-btn" aria-label="Llamar">${ICON_PHONE}</a>` : ''}
+        <button type="button" class="verlink" onclick="openProductoDetail('${p.id}')">Ver más →</button>
       </div>
     </div>
   </div>`;
+}
+function openProductoDetail(id){
+  const p = productos.find(x=>x.id===id);
+  if(!p) return;
+  const waNumber = (p.whatsapp||'').replace(/[^0-9]/g,'');
+  const waLink = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent('Hola, vi tu publicación de "'+p.nombre+'" en TallerYa 👋')}` : '';
+  const fotos = (p.imagenes && p.imagenes.length ? p.imagenes : (p.imagen ? [p.imagen] : []));
+
+  let galeriaHTML = '';
+  if(fotos.length===1){
+    galeriaHTML = `<img src="${escapeAttr(fotos[0])}" alt="${escapeAttr(p.nombre)}" style="width:100%;height:220px;object-fit:contain;background:var(--bg);border-radius:12px;margin-bottom:16px;display:block;">`;
+  }else if(fotos.length>1){
+    galeriaHTML = `
+      <div style="display:grid;grid-template-columns:repeat(${fotos.length},1fr);gap:8px;margin-bottom:16px;">
+        ${fotos.map(f=>`<img src="${escapeAttr(f)}" alt="${escapeAttr(p.nombre)}" style="width:100%;height:150px;object-fit:cover;border-radius:10px;background:var(--bg);display:block;">`).join('')}
+      </div>`;
+  }
+
+  document.getElementById('modalTitle').textContent = p.nombre;
+  document.getElementById('modalBody').innerHTML = `
+    ${galeriaHTML}
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+      <span class="cat-pill">${escapeHtml(p.categoria||'Otros')}</span>
+      ${p.destacado ? `<span class="cat-pill" style="background:#FFF4E5;color:var(--orange-dark);">${ICON_STAR} Destacado</span>` : ''}
+    </div>
+    ${p.precio ? `<div class="pago-precio" style="font-size:22px;text-align:left;color:var(--blue);margin-bottom:12px;">${escapeHtml(p.precio)}</div>` : ''}
+    ${p.descripcion ? `<p style="color:var(--gray);font-size:14.5px;line-height:1.6;margin:0 0 16px;">${escapeHtml(p.descripcion)}</p>` : ''}
+    ${p.contacto ? `<a href="tel:${escapeAttr(p.contacto.replace(/[^0-9+]/g,''))}" class="row-icon" style="text-decoration:none;font-size:14px;margin-bottom:16px;">${ICON_PHONE}<span style="text-decoration:underline;">${escapeHtml(p.contacto)}</span></a>` : ''}
+    ${waLink ? `<a class="wa-btn" href="${waLink}" target="_blank" rel="noopener" style="width:100%;box-sizing:border-box;">${ICON_WA} Contactar por WhatsApp</a>` : ''}
+  `;
+  document.getElementById('editModalBg').classList.add('show');
 }
 async function renderProductosPublico(){
   const grid = document.getElementById('productosGrid');
@@ -2522,7 +2550,8 @@ window.addEventListener('appinstalled', ()=>{
   await fetchCategorias();
   initSelects();
   document.getElementById('f-destacado-wrap').innerHTML = destacadoBoxHTML('f', { mostrarAuspicio: true });
-  setupImageUpload('f', '');
+  document.getElementById('f-imagen-wrap').innerHTML = multiImageUploadHTML('f', []);
+  setupMultiImageUpload('f', []);
   go('home');
 })();
 </script>
