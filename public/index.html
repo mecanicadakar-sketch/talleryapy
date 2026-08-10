@@ -437,6 +437,36 @@
 
   /* ---------- Install app banner ---------- */
   /* ---------- Asistente mecánico (IA) ---------- */
+  /* ---------- Visor de fotos ampliado (lightbox) ---------- */
+  .lightbox-overlay{
+    position:fixed;inset:0;z-index:300;background:rgba(10,14,26,.94);
+    display:none;align-items:center;justify-content:center;
+  }
+  .lightbox-overlay.show{display:flex;}
+  .lightbox-img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:8px;}
+  .lightbox-close{
+    position:absolute;top:18px;right:22px;color:#fff;font-size:34px;line-height:1;
+    background:rgba(255,255,255,.1);width:44px;height:44px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .lightbox-close:hover{background:rgba(255,255,255,.2);}
+  .lightbox-nav{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.1);
+    color:#fff;font-size:32px;display:flex;align-items:center;justify-content:center;
+  }
+  .lightbox-nav:hover{background:rgba(255,255,255,.22);}
+  .lightbox-prev{left:16px;}
+  .lightbox-next{right:16px;}
+  .lightbox-counter{
+    position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+    color:#fff;font-size:13px;background:rgba(255,255,255,.12);padding:5px 14px;border-radius:999px;
+  }
+  @media (max-width:560px){
+    .lightbox-nav{width:42px;height:42px;font-size:26px;}
+    .lightbox-close{width:38px;height:38px;font-size:26px;top:10px;right:10px;}
+  }
+
   .asistente-fab{
     position:fixed;right:20px;bottom:20px;z-index:190;
     width:58px;height:58px;border-radius:50%;
@@ -943,6 +973,14 @@
 <button type="button" class="asistente-fab" onclick="abrirAsistente()" aria-label="Asistente mecánico">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
 </button>
+
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="if(event.target===this)closeLightbox()">
+  <button type="button" class="lightbox-close" onclick="closeLightbox()" aria-label="Cerrar">&times;</button>
+  <button type="button" class="lightbox-nav lightbox-prev" id="lightboxPrev" onclick="lightboxPrev()" aria-label="Anterior">&#8249;</button>
+  <img id="lightboxImg" class="lightbox-img" src="" alt="Foto ampliada">
+  <button type="button" class="lightbox-nav lightbox-next" id="lightboxNext" onclick="lightboxNext()" aria-label="Siguiente">&#8250;</button>
+  <div class="lightbox-counter" id="lightboxCounter"></div>
+</div>
 
 <div class="modal-bg" id="asistenteModalBg">
   <div class="modal modal-wide" style="display:flex;flex-direction:column;max-height:80vh;">
@@ -1858,13 +1896,14 @@ function openTallerDetail(id){
   const fotos = (t.imagenes && t.imagenes.length ? t.imagenes : (t.imagen ? [t.imagen] : []));
   let galeriaHTML = '';
   if(fotos.length===1){
-    galeriaHTML = `<img src="${escapeAttr(fotos[0])}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:180px;object-fit:contain;background:var(--bg);border-radius:12px;margin-bottom:16px;display:block;">`;
+    galeriaHTML = `<img src="${escapeAttr(fotos[0])}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:180px;object-fit:contain;background:var(--bg);border-radius:12px;margin-bottom:16px;display:block;cursor:zoom-in;" onclick="openLightbox(currentDetailFotos,0)">`;
   }else if(fotos.length>1){
     galeriaHTML = `
       <div style="display:grid;grid-template-columns:repeat(${fotos.length},1fr);gap:8px;margin-bottom:16px;">
-        ${fotos.map(f=>`<img src="${escapeAttr(f)}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:130px;object-fit:cover;border-radius:10px;background:var(--bg);display:block;">`).join('')}
+        ${fotos.map((f,i)=>`<img src="${escapeAttr(f)}" alt="${escapeAttr(t.nombre)}" style="width:100%;height:130px;object-fit:cover;border-radius:10px;background:var(--bg);display:block;cursor:zoom-in;" onclick="openLightbox(currentDetailFotos,${i})">`).join('')}
       </div>`;
   }
+  currentDetailFotos = fotos;
 
   document.getElementById('modalTitle').textContent = t.nombre;
   document.getElementById('modalBody').innerHTML = `
@@ -2000,6 +2039,43 @@ function renderSOSResults(){
 ============================================================ */
 let asistenteHistorial = [];
 const ASISTENTE_SUGERENCIAS = ['No arranca', 'Ruido raro', 'Se sobrecalienta', 'Luz de check engine', 'Frenos raros'];
+
+/* ============================================================
+   VISOR DE FOTOS AMPLIADO (lightbox)
+============================================================ */
+let lightboxFotos = [];
+let lightboxIndex = 0;
+let currentDetailFotos = [];
+function openLightbox(fotos, idx){
+  lightboxFotos = fotos;
+  lightboxIndex = idx;
+  renderLightbox();
+  document.getElementById('lightboxOverlay').classList.add('show');
+}
+function renderLightbox(){
+  document.getElementById('lightboxImg').src = lightboxFotos[lightboxIndex];
+  const multi = lightboxFotos.length > 1;
+  document.getElementById('lightboxPrev').style.display = multi ? 'flex' : 'none';
+  document.getElementById('lightboxNext').style.display = multi ? 'flex' : 'none';
+  document.getElementById('lightboxCounter').textContent = multi ? `${lightboxIndex+1} / ${lightboxFotos.length}` : '';
+}
+function closeLightbox(){
+  document.getElementById('lightboxOverlay').classList.remove('show');
+}
+function lightboxPrev(){
+  lightboxIndex = (lightboxIndex - 1 + lightboxFotos.length) % lightboxFotos.length;
+  renderLightbox();
+}
+function lightboxNext(){
+  lightboxIndex = (lightboxIndex + 1) % lightboxFotos.length;
+  renderLightbox();
+}
+document.addEventListener('keydown', (e)=>{
+  if(!document.getElementById('lightboxOverlay').classList.contains('show')) return;
+  if(e.key==='Escape') closeLightbox();
+  else if(e.key==='ArrowLeft') lightboxPrev();
+  else if(e.key==='ArrowRight') lightboxNext();
+});
 
 function abrirAsistente(){
   document.getElementById('asistenteModalBg').classList.add('show');
@@ -2146,13 +2222,14 @@ function openProductoDetail(id){
 
   let galeriaHTML = '';
   if(fotos.length===1){
-    galeriaHTML = `<img src="${escapeAttr(fotos[0])}" alt="${escapeAttr(p.nombre)}" style="width:100%;height:220px;object-fit:contain;background:var(--bg);border-radius:12px;margin-bottom:16px;display:block;">`;
+    galeriaHTML = `<img src="${escapeAttr(fotos[0])}" alt="${escapeAttr(p.nombre)}" style="width:100%;height:220px;object-fit:contain;background:var(--bg);border-radius:12px;margin-bottom:16px;display:block;cursor:zoom-in;" onclick="openLightbox(currentDetailFotos,0)">`;
   }else if(fotos.length>1){
     galeriaHTML = `
       <div style="display:grid;grid-template-columns:repeat(${fotos.length},1fr);gap:8px;margin-bottom:16px;">
-        ${fotos.map(f=>`<img src="${escapeAttr(f)}" alt="${escapeAttr(p.nombre)}" style="width:100%;height:150px;object-fit:cover;border-radius:10px;background:var(--bg);display:block;">`).join('')}
+        ${fotos.map((f,i)=>`<img src="${escapeAttr(f)}" alt="${escapeAttr(p.nombre)}" style="width:100%;height:150px;object-fit:cover;border-radius:10px;background:var(--bg);display:block;cursor:zoom-in;" onclick="openLightbox(currentDetailFotos,${i})">`).join('')}
       </div>`;
   }
+  currentDetailFotos = fotos;
 
   document.getElementById('modalTitle').textContent = p.nombre;
   document.getElementById('modalBody').innerHTML = `
