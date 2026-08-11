@@ -2039,29 +2039,7 @@ function renderSOSResults(){
 ============================================================ */
 let asistenteHistorial = [];
 const ASISTENTE_SUGERENCIAS = ['No arranca', 'Ruido raro', 'Se sobrecalienta', 'Luz de check engine', 'Frenos raros'];
-async function enviarMensajeAIA(mensajeUsuario) {
-  try {
-    const respuesta = await fetch('/api/asistente', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ mensaje: mensajeUsuario })
-    });
 
-    const data = await respuesta.json();
-
-    if (data.respuesta) {
-      // Aquí agregas 'data.respuesta' a la ventana de chat del usuario
-      console.log("Respuesta de la IA:", data.respuesta);
-      return data.respuesta;
-    } else {
-      console.error("Error devuelto:", data.error);
-    }
-  } catch (error) {
-    console.error("Error al conectar con la API:", error);
-  }
-}
 /* ============================================================
    VISOR DE FOTOS AMPLIADO (lightbox)
 ============================================================ */
