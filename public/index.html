@@ -438,6 +438,15 @@
   /* ---------- Install app banner ---------- */
   /* ---------- Asistente mecánico (IA) ---------- */
   /* ---------- Visor de fotos ampliado (lightbox) ---------- */
+  /* ---------- Toast (aviso flotante) ---------- */
+  .toast{
+    position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(10px);
+    background:var(--navy);color:#fff;font-size:13.5px;font-weight:600;
+    padding:12px 20px;border-radius:999px;box-shadow:0 10px 24px -8px rgba(0,0,0,.4);
+    z-index:250;opacity:0;pointer-events:none;transition:.2s;white-space:nowrap;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
   .lightbox-overlay{
     position:fixed;inset:0;z-index:300;background:rgba(10,14,26,.94);
     display:none;align-items:center;justify-content:center;
@@ -1229,19 +1238,69 @@ function toggleSoloFavoritos(){
 /* ============================================================
    COMPARTIR
 ============================================================ */
-function shareTaller(id, e){
+async function shareTaller(id, e){
   if(e) e.stopPropagation();
   const t = talleres.find(x=>x.id===id);
   if(!t) return;
   const url = window.location.origin + window.location.pathname + '?taller=' + id;
+
   if(navigator.share){
-    navigator.share({ title: t.nombre, text: `Mirá ${t.nombre} en TallerYa`, url }).catch(()=>{});
-  }else if(navigator.clipboard){
-    navigator.clipboard.writeText(url).then(()=>{
-      alert('Link copiado 📋\n' + url);
-    }).catch(()=>{ prompt('Copiá este link para compartir:', url); });
-  }else{
-    prompt('Copiá este link para compartir:', url);
+    try{
+      await navigator.share({ title: t.nombre, text: `Mirá ${t.nombre} en TallerYa`, url });
+      return;
+    }catch(err){
+      if(err && err.name === 'AbortError') return; // el usuario cerró el menú de compartir, no hacer nada más
+      // si falla por otro motivo, probamos los métodos de respaldo de abajo
+    }
+  }
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    try{
+      await navigator.clipboard.writeText(url);
+      showToast('Link copiado 📋');
+      return;
+    }catch(err){}
+  }
+
+  mostrarLinkCompartir(url, t.nombre);
+}
+
+let toastTimer = null;
+function showToast(msg){
+  let el = document.getElementById('toastMsg');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'toastMsg';
+    el.className = 'toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> el.classList.remove('show'), 3000);
+}
+
+function mostrarLinkCompartir(url, titulo){
+  document.getElementById('modalTitle').textContent = 'Compartir';
+  document.getElementById('modalBody').innerHTML = `
+    <p style="color:var(--gray);font-size:13.5px;margin:0 0 14px;">Copiá este link para compartir "${escapeHtml(titulo)}":</p>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="shareLinkInput" value="${escapeAttr(url)}" readonly style="flex:1;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font-size:13.5px;">
+      <button type="button" class="submit-btn" style="width:auto;padding:0 18px;" onclick="copiarLinkCompartir()">Copiar</button>
+    </div>
+  `;
+  document.getElementById('editModalBg').classList.add('show');
+}
+function copiarLinkCompartir(){
+  const input = document.getElementById('shareLinkInput');
+  input.focus();
+  input.select();
+  input.setSelectionRange(0, 99999);
+  try{
+    document.execCommand('copy');
+    showToast('Link copiado 📋');
+  }catch(e){
+    showToast('Seleccioná el texto y copialo con Ctrl+C');
   }
 }
 
