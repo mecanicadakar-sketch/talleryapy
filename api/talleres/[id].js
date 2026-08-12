@@ -3,14 +3,8 @@ import { isAuthorized } from '../_auth.js';
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  let sql;
-  try {
-    await ensureSchema();
-    sql = getSql();
-  } catch (e) {
-    res.status(500).json({ error: 'Error de base de datos: ' + e.message });
-    return;
-  }
+  await ensureSchema();
+  const sql = getSql();
   const { id } = req.query;
 
   if (req.method === 'PATCH') {
@@ -37,14 +31,11 @@ export default async function handler(req, res) {
     const servicios = JSON.stringify(b.servicios || []);
     const lat = b.ubicacion ? b.ubicacion.lat : null;
     const lng = b.ubicacion ? b.ubicacion.lng : null;
-    const imagenesArr = Array.isArray(b.imagenes) ? b.imagenes.filter(Boolean).slice(0, 3) : [];
-    const imagenesJson = JSON.stringify(imagenesArr);
-    const primeraImagen = imagenesArr[0] || b.imagen || '';
     await sql`
       UPDATE talleres SET
         nombre = ${b.nombre}, categoria = ${b.categoria || ''}, ciudad = ${b.ciudad}, direccion = ${b.direccion},
         horario = ${b.horario || ''}, descripcion = ${b.descripcion || ''}, servicios = ${servicios}::jsonb,
-        telefono = ${b.telefono || ''}, whatsapp = ${b.whatsapp}, email = ${b.email || ''}, imagen = ${primeraImagen}, imagenes = ${imagenesJson}::jsonb,
+        telefono = ${b.telefono || ''}, whatsapp = ${b.whatsapp}, email = ${b.email || ''}, imagen = ${b.imagen || ''},
         lat = ${lat}, lng = ${lng}, destacado_solicitado = ${Boolean(b.destacadoSolicitado)},
         auspicio_solicitado = ${Boolean(b.auspicioSolicitado)}, telefono_pago = ${b.telefonoPago || ''}
       WHERE id = ${id}

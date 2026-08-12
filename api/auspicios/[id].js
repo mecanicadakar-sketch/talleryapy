@@ -3,14 +3,8 @@ import { isAuthorized } from '../_auth.js';
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  let sql;
-  try {
-    await ensureSchema();
-    sql = getSql();
-  } catch (e) {
-    res.status(500).json({ error: 'Error de base de datos: ' + e.message });
-    return;
-  }
+  await ensureSchema();
+  const sql = getSql();
   const { id } = req.query;
 
   if (req.method === 'PATCH') {
