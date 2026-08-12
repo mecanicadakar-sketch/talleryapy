@@ -78,7 +78,6 @@ gh repo create tallerya --private --source=. --push
    | `ADMIN_USER` | `Mangucho` |
    | `ADMIN_PIN` | `Cajiri120588#` |
    | `ADMIN_TOKEN_SECRET` | cualquier texto largo y aleatorio (ej: generalo en [1password.com/password-generator](https://1password.com/password-generator/)) |
-   | `ANTHROPIC_API_KEY` | (opcional) tu API key de [console.anthropic.com](https://console.anthropic.com), para activar el Asistente Mecánico. Si no la cargás, el sitio funciona igual y el asistente solo muestra un aviso. |
 
 3. Hacé clic en **Deploy**. En 1-2 minutos vas a tener tu URL pública
    (`https://tallerya-tuusuario.vercel.app`).
